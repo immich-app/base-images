@@ -18,7 +18,7 @@ permissions:
 
 jobs:
   build_and_push:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     strategy:
       # Prevent a failure in one image from stopping the other builds
       fail-fast: false
@@ -26,7 +26,7 @@ jobs:
         include:
           - context: "server"
             image: "base-server"
-            platforms: "linux/amd64"
+            platforms: "linux/amd64,linux/arm64"
 
     steps:
       - name: Checkout
