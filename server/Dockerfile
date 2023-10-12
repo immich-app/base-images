@@ -33,9 +33,19 @@ RUN sed -i -e's/ main/ main contrib non-free non-free-firmware/g' /etc/apt/sourc
         zlib1g \
         $(if [ $(arch) = "x86_64" ]; then echo "intel-media-va-driver-non-free"; fi) && \
     ./install-ffmpeg.sh && \
-    apt-get autoremove && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/* && \
     ./build-libraw.sh && \
     ./build-imagemagick.sh && \
-    ./build-libvips.sh
+    ./build-libvips.sh && \
+    apt-get remove -y --purge \
+        autoconf \
+        build-essential \
+        meson \
+        ninja-build \
+        pkg-config && \
+    apt-get autoremove -y --purge && \
+    apt-get clean && \
+    rm -rf \
+        /var/tmp/* \
+        /var/lib/apt/lists/* \
+        /root/.cache \
+        /var/lib/apt/lists/*
