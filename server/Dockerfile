@@ -58,10 +58,12 @@ RUN sed -i -e's/ main/ main contrib non-free non-free-firmware/g' /etc/apt/sourc
         tini \
         wget \
         zlib1g && \
+    echo "**** build dependencies ****" && \
     ./install-ffmpeg.sh && \
     ./build-libraw.sh && \
     ./build-imagemagick.sh && \
     ./build-libvips.sh && \
+    echo "**** cleanup ****" && \
     rm -f \
         build-* \
         install-ffmpeg.sh \
