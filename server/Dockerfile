@@ -1,4 +1,4 @@
-FROM node:20.8-bookworm
+FROM node:20-bookworm-slim
 
 WORKDIR /usr/src/app
 
