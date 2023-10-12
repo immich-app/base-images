@@ -1,13 +1,12 @@
 name: Build and Push Docker Images
 
 on:
-  workflow_dispatch:
   push:
     branches: [main]
   pull_request:
     branches: [main]
-  release:
-    types: [published]
+  schedule:
+    - cron: '35 20 * * 4'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
