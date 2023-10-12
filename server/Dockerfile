@@ -5,7 +5,7 @@ WORKDIR /usr/src/app
 ENV LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH \
     LD_RUN_PATH=/usr/local/lib:$LD_RUN_PATH
 
-COPY bin/* build-lock.json .
+COPY bin/* .
 
 RUN sed -i -e's/ main/ main contrib non-free non-free-firmware/g' /etc/apt/sources.list.d/debian.sources && \
     apt-get update && \
@@ -39,6 +39,7 @@ RUN sed -i -e's/ main/ main contrib non-free non-free-firmware/g' /etc/apt/sourc
         libgomp1 \
         libgsf-1-114 \
         libheif1 \
+        libjpeg62-turbo \
         libjxl0.7 \
         liblcms2-2 \
         liblqr-1-0 \
@@ -54,11 +55,17 @@ RUN sed -i -e's/ main/ main contrib non-free non-free-firmware/g' /etc/apt/sourc
         libwebpdemux2 \
         libwebpmux3 \
         mesa-va-drivers \
+        tini \
+        wget \
         zlib1g && \
     ./install-ffmpeg.sh && \
     ./build-libraw.sh && \
     ./build-imagemagick.sh && \
     ./build-libvips.sh && \
+    rm -f \
+        build-* \
+        install-ffmpeg.sh \
+        use-camera-web.patch && \
     apt-get remove -y --purge \
         autoconf \
         build-essential \
@@ -70,7 +77,6 @@ RUN sed -i -e's/ main/ main contrib non-free non-free-firmware/g' /etc/apt/sourc
         libheif-dev \
         libjpeg62-turbo-dev \
         libjxl-dev \
-        liblcms2-2 \
         liborc-0.4-dev \
         librsvg2-dev \
         libspng-dev \
