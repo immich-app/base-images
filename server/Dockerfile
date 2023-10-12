@@ -10,7 +10,7 @@ COPY bin/* build-lock.json .
 RUN sed -i -e's/ main/ main contrib non-free non-free-firmware/g' /etc/apt/sources.list.d/debian.sources && \
     apt-get update && \
     echo "**** install build packages ****" && \
-    apt-get install -yqq \
+    apt-get install --no-install-recommends -yqq \
         autoconf \
         build-essential \
         jq \
@@ -30,8 +30,8 @@ RUN sed -i -e's/ main/ main contrib non-free non-free-firmware/g' /etc/apt/sourc
         ninja-build \
         pkg-config && \
     echo "**** install runtime packages ****" && \
-    apt-get install --no-install-recommends -y \
-        $(if [ $(arch) = "x86_64" ]; then echo "intel-media-va-driver-non-free"; fi) && \
+    apt-get install --no-install-recommends -yqq \
+        $(if [ $(arch) = "x86_64" ]; then echo "intel-media-va-driver-non-free"; fi) \
         libexif12 \
         libexpat1 \
         libgcc-s1 \
