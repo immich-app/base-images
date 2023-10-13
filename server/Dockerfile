@@ -68,7 +68,7 @@ RUN sed -i -e's/ main/ main contrib non-free non-free-firmware/g' /etc/apt/sourc
         build-* \
         install-ffmpeg.sh \
         use-camera-web.patch && \
-    apt-get remove -y --purge \
+    apt-get remove -y \
         autoconf \
         build-essential \
         jq \
@@ -86,7 +86,7 @@ RUN sed -i -e's/ main/ main contrib non-free non-free-firmware/g' /etc/apt/sourc
         meson \
         ninja-build \
         pkg-config && \
-    apt-get autoremove -y --purge && \
+    apt-get autoremove -y && \
     apt-get clean && \
     rm -rf \
         /var/tmp/* \
