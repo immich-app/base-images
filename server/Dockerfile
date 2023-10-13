@@ -96,7 +96,7 @@ RUN sed -i -e's/ main/ main contrib non-free non-free-firmware/g' /etc/apt/sourc
 
 FROM node:20.8-bookworm
 
-COPY bin/install-ffmpeg.sh build-lock.json ./
+COPY bin/install-ffmpeg.sh bin/build-lock.json ./
 RUN sed -i -e's/ main/ main contrib non-free non-free-firmware/g' /etc/apt/sources.list.d/debian.sources && \
     apt-get update && \
     apt-get install -yqq \
