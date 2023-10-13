@@ -84,8 +84,7 @@ RUN sed -i -e's/ main/ main contrib non-free non-free-firmware/g' /etc/apt/sourc
         libspng-dev \
         libwebp-dev \
         meson \
-        ninja-build \
-        pkg-config && \
+        ninja-build && \
     apt-get autoremove -y && \
     apt-get clean && \
     rm -rf \
