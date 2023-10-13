@@ -6,7 +6,7 @@ on:
   pull_request:
     branches: [main]
   schedule:
-    - cron: '35 20 * * 4'
+    - cron: '0 8 * * 5'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -55,6 +55,15 @@ jobs:
             latest=false
           images: |
             name=ghcr.io/${{ github.repository_owner }}/${{matrix.image}}
+          tags: |
+            # Tag scheduled runs with date
+            type=schedule,pattern={{date 'YYYYMMDD'}}
+            # Tag with branch name
+            type=ref,event=branch
+            # Tag with pr-number
+            type=ref,event=pr
+            # Tag with git tag on release
+            type=ref,event=tag
 
       - name: Build and push image
         uses: docker/build-push-action@v5.0.0
