@@ -35,8 +35,11 @@ RUN ./build-libvips.sh
 
 FROM node:20.8-bookworm-slim
 
+WORKDIR /usr/src/app
+
 RUN sed -i -e's/ main/ main contrib non-free non-free-firmware/g' /etc/apt/sources.list.d/debian.sources
 COPY bin/install-ffmpeg.sh bin/build-lock.json ./
+
 RUN apt-get update && \
     apt-get install --no-install-recommends -yqq \
         $(if [ $(arch) = "x86_64" ]; then echo "intel-media-va-driver-non-free"; fi) \
@@ -77,4 +80,3 @@ RUN apt-get update && \
 
 COPY --from=builder /usr/local/lib/ /usr/local/lib/
 RUN ldconfig /usr/local/lib
-WORKDIR /usr/src/app
