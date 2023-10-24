@@ -42,8 +42,8 @@ COPY bin/install-ffmpeg.sh bin/build-lock.json ./
 
 RUN apt-get update && \
     apt-get install --no-install-recommends -yqq \
-        $(if [ $(arch) = "x86_64" ]; then echo "intel-media-va-driver-non-free"; fi) \
         ca-certificates \
+        $(if [ $(arch) = "x86_64" ]; then echo "intel-media-va-driver-non-free"; fi) \
         jq \
         libexif12 \
         libexpat1 \
