@@ -33,7 +33,7 @@ RUN ./build-libraw.sh
 RUN ./build-imagemagick.sh
 RUN ./build-libvips.sh
 
-FROM node:20.8-bookworm-slim as prod
+FROM node:20.8-bookworm-slim as runtime
 
 WORKDIR /usr/src/app
 
