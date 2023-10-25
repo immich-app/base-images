@@ -1,4 +1,4 @@
-FROM node:20.8-bookworm as builder
+FROM node:20.8-bookworm as dev
 
 WORKDIR /usr/src/app
 
@@ -33,7 +33,7 @@ RUN ./build-libraw.sh
 RUN ./build-imagemagick.sh
 RUN ./build-libvips.sh
 
-FROM node:20.8-bookworm-slim
+FROM node:20.8-bookworm-slim as prod
 
 WORKDIR /usr/src/app
 
@@ -78,5 +78,5 @@ RUN apt-get update && \
     rm install-ffmpeg.sh && \
     rm build-lock.json
 
-COPY --from=builder /usr/local/lib/ /usr/local/lib/
+COPY --from=dev /usr/local/lib/ /usr/local/lib/
 RUN ldconfig /usr/local/lib
