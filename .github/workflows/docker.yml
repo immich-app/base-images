@@ -26,6 +26,7 @@ jobs:
           - context: "server"
             image: "base-server"
             platforms: "linux/amd64,linux/arm64"
+            stages: "dev,runtime"
 
     steps:
       - name: Checkout
@@ -57,13 +58,13 @@ jobs:
             name=ghcr.io/${{ github.repository_owner }}/${{matrix.image}}
           tags: |
             # Tag scheduled runs with date
-            type=schedule,pattern={{date 'YYYYMMDD'}}
+            type=schedule,pattern={{date 'YYYYMMDD'}},suffix=-${{ matrix.stages }}
             # Tag with branch name
-            type=ref,event=branch
+            type=ref,event=branch,suffix=-${{ matrix.stages }}
             # Tag with pr-number
-            type=ref,event=pr
+            type=ref,event=pr,suffix=-${{ matrix.stages }}
             # Tag with git tag on release
-            type=ref,event=tag
+            type=ref,event=tag,suffix=-${{ matrix.stages }}
 
       - name: Build and push image
         uses: docker/build-push-action@v5.0.0
@@ -74,3 +75,4 @@ jobs:
           push: ${{ !github.event.pull_request.head.repo.fork }}
           tags: ${{ steps.metadata.outputs.tags }}
           labels: ${{ steps.metadata.outputs.labels }}
+          target: ${{ matrix.stages }}
