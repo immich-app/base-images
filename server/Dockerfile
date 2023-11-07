@@ -1,4 +1,4 @@
-FROM node:20.8-bookworm as dev
+FROM node:21.1-bookworm as dev
 
 WORKDIR /usr/src/app
 
@@ -33,7 +33,7 @@ RUN ./build-libraw.sh
 RUN ./build-imagemagick.sh
 RUN ./build-libvips.sh
 
-FROM node:20.8-bookworm-slim as prod
+FROM node:21.1-bookworm-slim as prod
 
 WORKDIR /usr/src/app
 
