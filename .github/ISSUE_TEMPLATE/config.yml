@@ -1,0 +1,14 @@
+blank_issues_enabled: false
+contact_links:
+  - name: I have a question or need support
+    url: https://discord.gg/D8JsnBEuKb
+    about: We use GitHub for tracking bugs, please check out our Discord channel for freaky fast support.
+  - name: Feature Request
+    url: https://github.com/immich-app/immich/discussions/new?category=feature-request
+    about: Please use our GitHub Discussion for making feature requests.
+  - name: I want to report a bug with Immich
+    url: https://github.com/immich-app/immich/issues/new/choose
+    about: We track bugs on the main immich repo only, this will take you there.
+  - name: I'm unsure where to go
+    url: https://discord.gg/D8JsnBEuKb
+    about: If you are unsure where to go, then joining our Discord is recommended; Just ask!
