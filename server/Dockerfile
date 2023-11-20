@@ -10,6 +10,25 @@ RUN apt-get update && \
         autoconf \
         build-essential \
         jq \
+        perl \
+        libnet-ssleay-perl \
+        libio-socket-ssl-perl \
+        libcapture-tiny-perl \
+        libfile-which-perl \
+        libfile-chdir-perl \
+        libpkgconfig-perl \
+        libffi-checklib-perl \
+        libtest-warnings-perl \
+        libtest-fatal-perl \
+        libtest-needs-perl \
+        libtest2-suite-perl \
+        libsort-versions-perl \
+        libpath-tiny-perl \
+        libtry-tiny-perl \
+        libterm-table-perl \
+        libany-uri-escape-perl \
+        libmojolicious-perl \
+        libfile-slurper-perl \
         libexif-dev \
         libexpat1-dev \
         libglib2.0-dev \
@@ -26,12 +45,14 @@ RUN apt-get update && \
         ninja-build \
         pkg-config \
         wget \
-        zlib1g
+        zlib1g \
+        cpanminus
 
 COPY bin/* .
 RUN ./build-libraw.sh
 RUN ./build-imagemagick.sh
 RUN ./build-libvips.sh
+RUN ./build-perllib-compress-brotli.sh
 
 RUN sed -i -e's/ main/ main contrib non-free non-free-firmware/g' /etc/apt/sources.list.d/debian.sources
 COPY bin/install-ffmpeg.sh bin/build-lock.json ./
