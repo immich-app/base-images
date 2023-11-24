@@ -35,6 +35,7 @@ RUN ./build-libvips.sh
 
 RUN sed -i -e's/ main/ main contrib non-free non-free-firmware/g' /etc/apt/sources.list.d/debian.sources
 COPY bin/install-ffmpeg.sh bin/build-lock.json ./
+RUN ./install-ffmpeg.sh
 
 FROM node:20.9-bookworm-slim as prod
 
