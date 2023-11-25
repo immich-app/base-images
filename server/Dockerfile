@@ -65,6 +65,9 @@ ADD https://download.geonames.org/export/dump/admin2Codes.txt /usr/src/resources
 RUN unzip /usr/src/resources/cities500.zip -d /usr/src/resources/ && \
     rm /usr/src/resources/cities500.zip && date --iso-8601=seconds | tr -d "\n" > /usr/src/resources/geodata-date.txt
 
+FROM node:20.9-bookworm-slim as prod
+WORKDIR /usr/src/app
+
 RUN sed -i -e's/ main/ main contrib non-free non-free-firmware/g' /etc/apt/sources.list.d/debian.sources
 COPY bin/install-ffmpeg.sh bin/build-lock.json ./
 
