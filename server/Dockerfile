@@ -59,10 +59,10 @@ COPY bin/install-ffmpeg.sh bin/build-lock.json ./
 RUN ./install-ffmpeg.sh
 
 ADD https://download.geonames.org/export/dump/cities500.zip /usr/src/resources/cities500.zip
-ADD https://download.geonames.org/export/dump/admin1CodesASCII.txt /usr/src/resources/admin1CodesASCII.txt
-ADD https://download.geonames.org/export/dump/admin2Codes.txt /usr/src/resources/admin2Codes.txt
+ADD --chmod=444 https://download.geonames.org/export/dump/admin1CodesASCII.txt /usr/src/resources/admin1CodesASCII.txt
+ADD --chmod=444 https://download.geonames.org/export/dump/admin2Codes.txt /usr/src/resources/admin2Codes.txt
 
-RUN unzip /usr/src/resources/cities500.zip -d /usr/src/resources/ && \
+RUN umask 0333 && unzip /usr/src/resources/cities500.zip -d /usr/src/resources/ && \
     rm /usr/src/resources/cities500.zip && date --iso-8601=seconds | tr -d "\n" > /usr/src/resources/geodata-date.txt
 
 FROM node:iron-bookworm-slim as prod
