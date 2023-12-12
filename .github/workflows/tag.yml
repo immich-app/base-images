@@ -1,4 +1,4 @@
-name: Set git tag
+name: Git tag
 
 on:
   workflow_dispatch:
@@ -28,6 +28,7 @@ jobs:
 
           if git tag -l $tag; then
             echo "Tag $tag already exists."
+            exit 1
           else
             git tag $tag
             git push origin $tag
