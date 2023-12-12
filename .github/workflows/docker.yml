@@ -56,14 +56,13 @@ jobs:
           images: |
             name=ghcr.io/${{ github.repository_owner }}/${{ matrix.image }}-${{ matrix.target }}
           tags: |
-            # Tag scheduled runs with date
-            type=raw,value=${{ github.ref_name }},enable=${{ github.event_name == 'push' }}
-            # Tag with branch name
+            type=schedule
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
             type=ref,event=branch
-            # Tag with pr-number
             type=ref,event=pr
-            # Tag with git tag on release
-            type=ref,event=tag
+            type=sha
 
       - name: Build and push image
         uses: docker/build-push-action@v5.1.0

@@ -1,9 +1,9 @@
 name: Set git tag
 
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
+  schedule:
+    - cron: "0 11 * * 4"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
