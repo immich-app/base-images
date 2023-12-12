@@ -2,17 +2,11 @@ name: Build and Push Docker Images
 
 on:
   push:
+    tags:
+      - "*"
     branches: [main]
   pull_request:
     branches: [main]
-  schedule:
-    - cron: "0 11 * * 4"
-  workflow_dispatch:
-    inputs:
-      pushDateTag:
-        description: 'Push datestamp (production) tag'
-        type: boolean
-        required: false
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -62,16 +56,6 @@ jobs:
             latest=false
           images: |
             name=ghcr.io/${{ github.repository_owner }}/${{ matrix.image }}-${{ matrix.target }}
-          tags: |
-            # Tag scheduled runs with date
-            type=schedule,pattern={{date 'YYYYMMDD'}}
-            type=raw,value={{date 'YYYYMMDD'}},enable=${{ inputs.pushDateTag || false }}
-            # Tag with branch name
-            type=ref,event=branch
-            # Tag with pr-number
-            type=ref,event=pr
-            # Tag with git tag on release
-            type=ref,event=tag
 
       - name: Build and push image
         uses: docker/build-push-action@v5.1.0
