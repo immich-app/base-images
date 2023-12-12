@@ -3,6 +3,8 @@ name: Build and Push Docker Images
 on:
   push:
     branches: [main]
+    tags:
+      - "*"
   pull_request:
     branches: [main]
   schedule:
@@ -22,7 +24,24 @@ permissions:
   packages: write
 
 jobs:
+  set_tag:
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.build_tag.outputs.tag }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: "main"
+          fetch-depth: 0
+
+      - name: Set tag
+        id: build_tag
+        run: |
+          echo "tag=$(date +'%Y%m%d')" >> $GITHUB_OUTPUT
+
   build_and_push:
+    needs: set_tag
     runs-on: self-hosted
     strategy:
       max-parallel: 1
@@ -53,17 +72,12 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Set tag
-        id: build_tag
-        run: |
-          echo "tag=$(date +'%Y%m%d')" >> $GITHUB_OUTPUT
-
       - name: Set git tag
         run: |
           git config --global user.name 'GitHub Actions'
           git config --global user.email 'github-actions@users.noreply.github.com'
-          git tag ${{ steps.build_tag.outputs.tag }}
-          git push origin ${{ steps.build_tag.outputs.tag }}
+          git tag ${{needs.set_tag.outputs.tag}}
+          git push origin ${{needs.set_tag.outputs.tag}}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         if: ${{ github.event_name != 'pull_request' }}
@@ -79,7 +93,7 @@ jobs:
             name=ghcr.io/${{ github.repository_owner }}/${{ matrix.image }}-${{ matrix.target }}
           tags: |
             # Tag scheduled runs with date
-            type=raw,value=${{ steps.build_tag.outputs.tag }}
+            type=raw,value=${{ needs.set_tag.outputs.tag }},enable=${{ github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' }}
             type=raw,value={{date 'YYYYMMDD'}},enable=${{ inputs.pushDateTag || false }}
             # Tag with branch name
             type=ref,event=branch
