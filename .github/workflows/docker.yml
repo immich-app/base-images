@@ -2,17 +2,10 @@ name: Build and Push Docker Images
 
 on:
   push:
-    branches: [main]
+    tags:
+      - "*"
   pull_request:
     branches: [main]
-  schedule:
-    - cron: "0 11 * * 4"
-  workflow_dispatch:
-    inputs:
-      pushDateTag:
-        description: "Push datestamp (production) tag"
-        type: boolean
-        required: false
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -22,24 +15,7 @@ permissions:
   packages: write
 
 jobs:
-  set_tag:
-    runs-on: ubuntu-latest
-    outputs:
-      tag: ${{ steps.build_tag.outputs.tag }}
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          ref: "main"
-          fetch-depth: 0
-
-      - name: Set tag
-        id: build_tag
-        run: |
-          echo "tag=$(date +'%Y%m%d')" >> $GITHUB_OUTPUT
-
   build_and_push:
-    needs: set_tag
     runs-on: self-hosted
     strategy:
       max-parallel: 1
@@ -81,8 +57,7 @@ jobs:
             name=ghcr.io/${{ github.repository_owner }}/${{ matrix.image }}-${{ matrix.target }}
           tags: |
             # Tag scheduled runs with date
-            type=schedule,value=${{ needs.set_tag.outputs.tag }}
-            type=raw,value={{date 'YYYYMMDD'}},enable=${{ inputs.pushDateTag || false }}
+            type=raw,value=${{ github.ref_name }},enable=${{ github.event_name == 'push' }}
             # Tag with branch name
             type=ref,event=branch
             # Tag with pr-number
@@ -102,23 +77,3 @@ jobs:
           labels: ${{ steps.metadata.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-
-  push_git_tags:
-    needs: [set_tag, build_and_push]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          ref: "main"
-          fetch-depth: 0
-
-      - name: Set git tag
-        run: |
-          git config --global user.name 'GitHub Actions'
-          git config --global user.email 'github-actions@users.noreply.github.com'
-          git tag ${{needs.set_tag.outputs.tag}}
-          git push origin ${{needs.set_tag.outputs.tag}}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        if: ${{ github.event_name != 'pull_request' }}
