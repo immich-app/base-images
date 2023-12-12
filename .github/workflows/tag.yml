@@ -20,7 +20,7 @@ jobs:
           fetch-depth: 0
           token: ${{secrets.PAT}}
 
-      - name: Set git tag
+      - name: Create and push new tag
         run: |
           tag=$(date +'%Y%m%d')
           git config --global user.name 'GitHub Actions'
