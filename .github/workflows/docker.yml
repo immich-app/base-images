@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
     inputs:
       pushDateTag:
-        description: 'Push datestamp (production) tag'
+        description: "Push datestamp (production) tag"
         type: boolean
         required: false
 
@@ -53,6 +53,21 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Set tag
+        id: build_tag
+        run: |
+          echo "tag=$(date +'%Y%m%d')" >> $GITHUB_OUTPUT
+
+      - name: Set git tag
+        run: |
+          git config --global user.name 'GitHub Actions'
+          git config --global user.email 'github-actions@users.noreply.github.com'
+          git tag ${{ steps.build_tag.outputs.tag }}
+          git push origin ${{ steps.build_tag.outputs.tag }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        if: ${{ github.event_name != 'pull_request' }}
+
       - name: Generate docker image tags
         id: metadata
         uses: docker/metadata-action@v5
@@ -64,7 +79,7 @@ jobs:
             name=ghcr.io/${{ github.repository_owner }}/${{ matrix.image }}-${{ matrix.target }}
           tags: |
             # Tag scheduled runs with date
-            type=schedule,pattern={{date 'YYYYMMDD'}}
+            type=raw,value=${{ steps.build_tag.outputs.tag }}
             type=raw,value={{date 'YYYYMMDD'}},enable=${{ inputs.pushDateTag || false }}
             # Tag with branch name
             type=ref,event=branch
