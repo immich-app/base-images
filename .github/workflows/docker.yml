@@ -72,16 +72,6 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Set git tag
-        run: |
-          git config --global user.name 'GitHub Actions'
-          git config --global user.email 'github-actions@users.noreply.github.com'
-          git tag ${{needs.set_tag.outputs.tag}}
-          git push origin ${{needs.set_tag.outputs.tag}}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        if: ${{ github.event_name != 'pull_request' }}
-
       - name: Generate docker image tags
         id: metadata
         uses: docker/metadata-action@v5
@@ -114,3 +104,23 @@ jobs:
           labels: ${{ steps.metadata.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+  push_git_tags:
+    needs: [set_tag, build_and_push]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: "main"
+          fetch-depth: 0
+
+      - name: Set git tag
+        run: |
+          git config --global user.name 'GitHub Actions'
+          git config --global user.email 'github-actions@users.noreply.github.com'
+          git tag ${{needs.set_tag.outputs.tag}}
+          git push origin ${{needs.set_tag.outputs.tag}}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        if: ${{ github.event_name != 'pull_request' }}
