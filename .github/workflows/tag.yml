@@ -4,18 +4,10 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
-    inputs:
-      pushDateTag:
-        description: "Push datestamp (production) tag"
-        type: boolean
-        required: false
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
-
-permissions:
-  packages: write
 
 jobs:
   set_tag:
@@ -26,6 +18,7 @@ jobs:
         with:
           ref: "main"
           fetch-depth: 0
+          token: ${{secrets.PAT}}
 
       - name: Set git tag
         run: |
@@ -39,5 +32,3 @@ jobs:
             git tag $tag
             git push origin $tag
           fi
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
