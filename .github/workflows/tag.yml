@@ -32,7 +32,12 @@ jobs:
           tag=$(date +'%Y%m%d')
           git config --global user.name 'GitHub Actions'
           git config --global user.email 'github-actions@users.noreply.github.com'
-          git tag $tag
-          git push origin $tag
+
+          if git tag -l $tag; then
+            echo "Tag $tag already exists."
+          else
+            git tag $tag
+            git push origin $tag
+          fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
