@@ -26,7 +26,7 @@ jobs:
           git config --global user.name 'GitHub Actions'
           git config --global user.email 'github-actions@users.noreply.github.com'
 
-          if git tag -l $tag; then
+          if [ git tag -l $tag ]; then
             echo "Tag $tag already exists."
             exit 1
           else
