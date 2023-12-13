@@ -106,8 +106,7 @@ RUN apt-get update && \
     apt-get autoremove -yqq && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
-    rm install-ffmpeg.sh && \
-    rm build-lock.json
+    rm install-ffmpeg.sh
 
 COPY --from=dev /usr/local/lib/ /usr/local/lib/
 COPY --from=dev /usr/src/resources/ /usr/src/resources/
