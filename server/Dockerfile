@@ -55,7 +55,6 @@ RUN ./build-libvips.sh
 RUN ./build-perllib-compress-brotli.sh
 
 RUN sed -i -e's/ main/ main contrib non-free non-free-firmware/g' /etc/apt/sources.list.d/debian.sources
-COPY bin/install-ffmpeg.sh bin/build-lock.json ./
 RUN ./install-ffmpeg.sh
 
 ADD https://download.geonames.org/export/dump/cities500.zip /usr/src/resources/cities500.zip
@@ -106,8 +105,7 @@ RUN apt-get update && \
     apt-get autoremove -yqq && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
-    rm install-ffmpeg.sh && \
-    rm build-lock.json
+    rm install-ffmpeg.sh
 
 COPY --from=dev /usr/local/lib/ /usr/local/lib/
 COPY --from=dev /usr/src/resources/ /usr/src/resources/
