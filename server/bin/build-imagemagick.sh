@@ -2,17 +2,11 @@
 
 set -e
 
-LOCK=$(jq -c '.packages[] | select(.name == "imagemagick")' build-lock.json)
-IMAGEMAGICK_VERSION=${IMAGEMAGICK_VERSION:=$(echo $LOCK | jq -r '.version')}
-IMAGEMAGICK_SHA256=${IMAGEMAGICK_SHA256:=$(echo $LOCK | jq -r '.sha256')}
+: "${IMAGEMAGICK_REVISION:=$(jq -cr '.sources[] | select(.name == "imagemagick").revision' build-lock.json)}"
 
-echo "$IMAGEMAGICK_SHA256  $IMAGEMAGICK_VERSION.tar.gz" > imagemagick.sha256
-mkdir -p ImageMagick
-wget -nv https://github.com/ImageMagick/ImageMagick/archive/${IMAGEMAGICK_VERSION}.tar.gz
-sha256sum -c imagemagick.sha256
-tar -xvf ${IMAGEMAGICK_VERSION}.tar.gz -C ImageMagick --strip-components=1
-rm ${IMAGEMAGICK_VERSION}.tar.gz
-rm imagemagick.sha256
+git clone https://github.com/ImageMagick/ImageMagick.git
+git -C ImageMagick reset --hard $IMAGEMAGICK_REVISION
+
 patch -u ImageMagick/coders/dng.c -i use-camera-wb.patch
 cd ImageMagick
 ./configure --with-modules

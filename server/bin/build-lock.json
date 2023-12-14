@@ -1,20 +1,22 @@
 {
-  "packages": [
+  "sources": [
     {
       "name": "imagemagick",
       "version": "7.1.1-13",
-      "sha256": "8e3ce1aaad19da9f2ca444072bcc631d193a219e3ee11c13ad6d3c895044142c"
+      "revision": "d5974ce50c84bee43731270a899d7a4a9500cc17"
     },
     {
       "name": "libraw",
       "version": "0.21.1",
-      "sha256": "b63d7ffa43463f74afcc02f9083048c231349b41cc9255dec0840cf8a67b52e0"
+      "revision": "cccb97647fcee56801fa68231fa8a38aa8b52ef7"
     },
     {
       "name": "libvips",
-      "version": "8.15.0",
-      "sha256": "d33f81c6ab4bd1faeedc36dc32f880b19e9d5ff69b502e59d175332dfb8f63f1"
-    },
+      "version": "8.15",
+      "revision": "0144d503a4e90ee56830dda9ebc39b2f25ae8b1f"
+    }
+  ],
+  "packages": [
     {
       "name": "ffmpeg",
       "version": "6.0-4",
