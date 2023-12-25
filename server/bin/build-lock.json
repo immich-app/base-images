@@ -2,8 +2,8 @@
   "sources": [
     {
       "name": "imagemagick",
-      "version": "7.1.1-13",
-      "revision": "d5974ce50c84bee43731270a899d7a4a9500cc17"
+      "version": "7.1.1-24",
+      "revision": "963f5fa2a3c87b362e2b6b29a31bff447b75925b"
     },
     {
       "name": "libraw",
