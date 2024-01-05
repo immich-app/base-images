@@ -6,7 +6,7 @@ set -e
 
 git clone https://github.com/libraw/libraw.git
 cd libraw
-git reset --hard $LIBVIPS_REVISION
+git reset --hard $LIBRAW_REVISION
 
 autoreconf --install
 ./configure
