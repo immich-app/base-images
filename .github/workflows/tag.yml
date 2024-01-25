@@ -3,7 +3,7 @@ name: Git tag
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 11 * * 4"
+    - cron: "0 11 * * 2"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
