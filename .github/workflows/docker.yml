@@ -17,7 +17,7 @@ permissions:
 
 jobs:
   build_and_push:
-    runs-on: self-hosted
+    runs-on: mich
     strategy:
       max-parallel: 1
       fail-fast: true
