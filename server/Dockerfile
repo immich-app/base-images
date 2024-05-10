@@ -1,4 +1,4 @@
-FROM node:iron-bookworm@sha256:3864be2201676a715cf240cfc17aec1d62459f92a7cbe7d32d1675e226e736c9 as dev
+FROM node:iron-bookworm@sha256:5e362bbb5ef4c6f6e2c86a27b7269b3b3e4bd8dba16be18037ee7ee4caa8afc1 as dev
 
 WORKDIR /usr/src/app
 
