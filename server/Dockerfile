@@ -96,6 +96,7 @@ RUN apt-get update && \
         libwebp7 \
         libwebpdemux2 \
         libwebpmux3 \
+        mesa-utils \
         mesa-va-drivers \
         mesa-vulkan-drivers \
         tini \
