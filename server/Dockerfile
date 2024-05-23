@@ -53,8 +53,6 @@ RUN ./build-libraw.sh
 RUN ./build-imagemagick.sh
 RUN ./build-libvips.sh
 RUN ./build-perllib-compress-brotli.sh
-
-RUN sed -i -e's/ main/ main contrib non-free non-free-firmware/g' /etc/apt/sources.list.d/debian.sources
 RUN ./install-ffmpeg.sh
 
 ADD https://download.geonames.org/export/dump/cities500.zip /usr/src/resources/cities500.zip
@@ -68,12 +66,12 @@ FROM node:iron-bookworm-slim@sha256:af6bd225b1b33a95d51bae37d1d78ddc600a45d366d2
 WORKDIR /usr/src/app
 
 RUN sed -i -e's/ main/ main contrib non-free non-free-firmware/g' /etc/apt/sources.list.d/debian.sources
-COPY bin/install-ffmpeg.sh bin/build-lock.json ./
+COPY bin/build-lock.json bin/configure-apt.sh bin/install-ffmpeg.sh  ./
 
-RUN apt-get update && \
+RUN ./configure-apt.sh && \
+    apt-get update && \
     apt-get install --no-install-recommends -yqq \
         ca-certificates \
-        $(if [ $(arch) = "x86_64" ]; then echo "intel-media-va-driver-non-free"; fi) \
         jq \
         libexif12 \
         libexpat1 \
@@ -103,6 +101,10 @@ RUN apt-get update && \
         wget \
         zlib1g && \
     ./install-ffmpeg.sh && \
+    if [ $(arch) = "x86_64" ]; then \
+    apt-get install -t unstable --no-install-recommends -yqq \
+        intel-media-va-driver-non-free \
+        intel-opencl-icd; fi && \
     apt-get remove -yqq jq wget ca-certificates && \
     apt-get autoremove -yqq && \
     apt-get clean && \
