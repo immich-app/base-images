@@ -62,7 +62,7 @@ ADD --chmod=444 https://download.geonames.org/export/dump/admin2Codes.txt /usr/s
 RUN umask 0333 && unzip /usr/src/resources/cities500.zip -d /usr/src/resources/ && \
     rm /usr/src/resources/cities500.zip && date --iso-8601=seconds | tr -d "\n" > /usr/src/resources/geodata-date.txt
 
-FROM node:iron-bookworm-slim@sha256:af6bd225b1b33a95d51bae37d1d78ddc600a45d366d26628b158e927f6a68e58 as prod
+FROM node:iron-bookworm-slim@sha256:cffed8cd39d6a380434e6d08116d188c53e70611175cd5ec7700f93f32a935a6 as prod
 WORKDIR /usr/src/app
 
 RUN sed -i -e's/ main/ main contrib non-free non-free-firmware/g' /etc/apt/sources.list.d/debian.sources
