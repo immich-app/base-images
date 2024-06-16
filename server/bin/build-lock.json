@@ -7,8 +7,8 @@
     },
     {
       "name": "libraw",
-      "version": "0.21.1",
-      "revision": "cccb97647fcee56801fa68231fa8a38aa8b52ef7"
+      "version": "0.22.0-SNAPSHOT",
+      "revision": "d3cbbd0e9934898eb28e4963ee99b51928e2acaa"
     },
     {
       "name": "libvips",
