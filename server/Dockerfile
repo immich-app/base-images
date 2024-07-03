@@ -113,5 +113,5 @@ RUN ./configure-apt.sh && \
     rm install-ffmpeg.sh
 
 COPY --from=dev /usr/local/lib/ /usr/local/lib/
-COPY --from=dev /usr/src/resources/ /usr/src/resources/
+COPY --from=dev /usr/src/resources/geodata/ /usr/src/resources/geodata/
 RUN ldconfig /usr/local/lib
