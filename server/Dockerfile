@@ -63,7 +63,7 @@ ADD --chmod=444 https://download.geonames.org/export/dump/admin2Codes.txt /build
 RUN umask 0333 && unzip /build/geodata/cities500.zip -d /build/geodata/ && \
     rm /build/geodata/cities500.zip && date --iso-8601=seconds | tr -d "\n" > /build/geodata/geodata-date.txt
 
-FROM node:20.15.0-bookworm-slim@sha256:1d05ae8a4d16d201ba911ba7bde30d25d079eb7e27feaf7a99fc383b2ff63fc0 as prod
+FROM node:20.15.0-bookworm-slim@sha256:b5e567dc37677a1485cec21e2f0c0df517c7afe40c1ebc28248c41520c77b3d0 as prod
 
 WORKDIR /build
 
