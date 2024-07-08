@@ -49,23 +49,26 @@ RUN apt-get update && \
         cpanminus
 
 COPY bin/* ./
+
 RUN ./build-libraw.sh
 RUN ./build-imagemagick.sh
 RUN ./build-libvips.sh
 RUN ./build-perllib-compress-brotli.sh
 RUN ./install-ffmpeg.sh
 
-ADD https://download.geonames.org/export/dump/cities500.zip /usr/src/resources/cities500.zip
-ADD --chmod=444 https://download.geonames.org/export/dump/admin1CodesASCII.txt /usr/src/resources/admin1CodesASCII.txt
-ADD --chmod=444 https://download.geonames.org/export/dump/admin2Codes.txt /usr/src/resources/admin2Codes.txt
+ADD https://download.geonames.org/export/dump/cities500.zip /build/geodata/cities500.zip
+ADD --chmod=444 https://download.geonames.org/export/dump/admin1CodesASCII.txt /build/geodata/admin1CodesASCII.txt
+ADD --chmod=444 https://download.geonames.org/export/dump/admin2Codes.txt /build/geodata/admin2Codes.txt
 
-RUN umask 0333 && unzip /usr/src/resources/cities500.zip -d /usr/src/resources/ && \
-    rm /usr/src/resources/cities500.zip && date --iso-8601=seconds | tr -d "\n" > /usr/src/resources/geodata-date.txt
+RUN umask 0333 && unzip /build/geodata/cities500.zip -d /build/geodata/ && \
+    rm /build/geodata/cities500.zip && date --iso-8601=seconds | tr -d "\n" > /build/geodata/geodata-date.txt
 
 FROM node:20.15.0-bookworm-slim@sha256:1d05ae8a4d16d201ba911ba7bde30d25d079eb7e27feaf7a99fc383b2ff63fc0 as prod
-WORKDIR /usr/src/app
+
+WORKDIR /build
 
 RUN sed -i -e's/ main/ main contrib non-free non-free-firmware/g' /etc/apt/sources.list.d/debian.sources
+
 COPY bin/build-lock.json bin/configure-apt.sh bin/install-ffmpeg.sh  ./
 
 RUN ./configure-apt.sh && \
@@ -109,8 +112,11 @@ RUN ./configure-apt.sh && \
     apt-get autoremove -yqq && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
-    rm install-ffmpeg.sh
+    rm install-ffmpeg.sh configure-apt.sh
 
 COPY --from=dev /usr/local/lib/ /usr/local/lib/
-COPY --from=dev /usr/src/resources/ /usr/src/resources/
+COPY --from=dev /build/geodata/ /build/geodata/
+
+WORKDIR /usr/src/app
+
 RUN ldconfig /usr/local/lib
