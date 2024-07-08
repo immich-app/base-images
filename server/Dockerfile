@@ -1,4 +1,4 @@
-FROM node:20.15.0-bookworm@sha256:4db67aec2ba104897ac9af929efdbc0c95a026cb986ed83cea29fb3bb46b0506 as dev
+FROM node:20.15.0-bookworm@sha256:93d2e801dabc677ea0b30b47d3d729fab63ecb20be7ac0ab204cc3c65731297a as dev
 
 WORKDIR /usr/src/app
 
