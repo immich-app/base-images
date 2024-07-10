@@ -1,4 +1,4 @@
-FROM node:20.15.0-bookworm@sha256:93d2e801dabc677ea0b30b47d3d729fab63ecb20be7ac0ab204cc3c65731297a as dev
+FROM node:20.15.1-bookworm@sha256:786005cf39792f7046bcd66491056c26d2dbcc669c072d1a1e4ef4fcdddd26eb as dev
 
 WORKDIR /usr/src/app
 
@@ -63,7 +63,7 @@ ADD --chmod=444 https://download.geonames.org/export/dump/admin2Codes.txt /build
 RUN umask 0333 && unzip /build/geodata/cities500.zip -d /build/geodata/ && \
     rm /build/geodata/cities500.zip && date --iso-8601=seconds | tr -d "\n" > /build/geodata/geodata-date.txt
 
-FROM node:20.15.0-bookworm-slim@sha256:b5e567dc37677a1485cec21e2f0c0df517c7afe40c1ebc28248c41520c77b3d0 as prod
+FROM node:20.15.1-bookworm-slim@sha256:8d5c168087c841ac367468f77935aa78eff3195b48bf9eb05cbc761e6b9db507 as prod
 
 WORKDIR /build
 
