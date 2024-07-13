@@ -32,6 +32,7 @@ RUN ./configure-apt.sh && \
         libany-uri-escape-perl \
         libmojolicious-perl \
         libfile-slurper-perl \
+        libde265-dev \
         libexif-dev \
         libexpat1-dev \
         libglib2.0-dev \
@@ -49,9 +50,8 @@ RUN ./configure-apt.sh && \
         zlib1g \
         cpanminus && \
     apt-get install -t unstable --no-install-recommends -yqq \
-        libwebp-dev \
         libdav1d-dev \
-        libde265-dev
+        libwebp-dev
 
 COPY bin/* ./
 
@@ -80,6 +80,7 @@ RUN ./configure-apt.sh && \
     apt-get install --no-install-recommends -yqq \
         ca-certificates \
         jq \
+        libde265-0 \
         libexif12 \
         libexpat1 \
         libgcc-s1 \
@@ -110,8 +111,7 @@ RUN ./configure-apt.sh && \
         intel-opencl-icd \
         libwebp7 \
         libwebpdemux2 \
-        libwebpmux3 \
-        libde265-0; fi && \
+        libwebpmux3; fi && \
     apt-get remove -yqq jq wget ca-certificates && \
     apt-get autoremove -yqq && \
     apt-get clean && \
