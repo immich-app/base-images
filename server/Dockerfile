@@ -5,10 +5,13 @@ WORKDIR /usr/src/app
 ENV LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH \
     LD_RUN_PATH=/usr/local/lib:$LD_RUN_PATH
 
-RUN apt-get update && \
+COPY bin/configure-apt.sh ./
+RUN ./configure-apt.sh && \
+    apt-get update && \
     apt-get install --no-install-recommends -yqq \
         autoconf \
         build-essential \
+        cmake \
         jq \
         perl \
         libnet-ssleay-perl \
@@ -33,23 +36,26 @@ RUN apt-get update && \
         libexpat1-dev \
         libglib2.0-dev \
         libgsf-1-dev \
-        libheif-dev \
         libjpeg62-turbo-dev \
         libjxl-dev \
         liblcms2-2 \
         liborc-0.4-dev \
         librsvg2-dev \
         libspng-dev \
-        libwebp-dev \
         meson \
         ninja-build \
         pkg-config \
         wget \
         zlib1g \
-        cpanminus
+        cpanminus && \
+    apt-get install -t unstable --no-install-recommends -yqq \
+        libwebp-dev \
+        libdav1d-dev \
+        libde265-dev
 
 COPY bin/* ./
 
+RUN ./build-libheif.sh
 RUN ./build-libraw.sh
 RUN ./build-imagemagick.sh
 RUN ./build-libvips.sh
@@ -67,8 +73,6 @@ FROM node:20.15.1-bookworm-slim@sha256:8d5c168087c841ac367468f77935aa78eff3195b4
 
 WORKDIR /build
 
-RUN sed -i -e's/ main/ main contrib non-free non-free-firmware/g' /etc/apt/sources.list.d/debian.sources
-
 COPY bin/build-lock.json bin/configure-apt.sh bin/install-ffmpeg.sh  ./
 
 RUN ./configure-apt.sh && \
@@ -82,7 +86,6 @@ RUN ./configure-apt.sh && \
         libglib2.0-0 \
         libgomp1 \
         libgsf-1-114 \
-        libheif1 \
         libjpeg62-turbo \
         libjxl0.7 \
         liblcms2-2 \
@@ -94,9 +97,6 @@ RUN ./configure-apt.sh && \
         liborc-0.4-0 \
         librsvg2-2 \
         libspng0 \
-        libwebp7 \
-        libwebpdemux2 \
-        libwebpmux3 \
         mesa-utils \
         mesa-va-drivers \
         mesa-vulkan-drivers \
@@ -107,7 +107,11 @@ RUN ./configure-apt.sh && \
     if [ $(arch) = "x86_64" ]; then \
     apt-get install -t unstable --no-install-recommends -yqq \
         intel-media-va-driver-non-free \
-        intel-opencl-icd; fi && \
+        intel-opencl-icd \
+        libwebp7 \
+        libwebpdemux2 \
+        libwebpmux3 \
+        libde265-0; fi && \
     apt-get remove -yqq jq wget ca-certificates && \
     apt-get autoremove -yqq && \
     apt-get clean && \
@@ -118,5 +122,6 @@ COPY --from=dev /usr/local/lib/ /usr/local/lib/
 COPY --from=dev /build/geodata/ /build/geodata/
 
 WORKDIR /usr/src/app
+ENV LD_LIBRARY_PATH=/usr/lib/jellyfin-ffmpeg/lib:$LD_LIBRARY_PATH
 
 RUN ldconfig /usr/local/lib
