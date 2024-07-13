@@ -6,6 +6,11 @@
       "revision": "963f5fa2a3c87b362e2b6b29a31bff447b75925b"
     },
     {
+      "name": "libheif",
+      "version": "1.18.0",
+      "revision": "537d66852629e23ca778ef717343be8f657c0e79"
+    },
+    {
       "name": "libraw",
       "version": "0.22.0-SNAPSHOT",
       "revision": "d3cbbd0e9934898eb28e4963ee99b51928e2acaa"
