@@ -65,6 +65,7 @@ RUN ./install-ffmpeg.sh
 ADD https://download.geonames.org/export/dump/cities500.zip /build/geodata/cities500.zip
 ADD --chmod=444 https://download.geonames.org/export/dump/admin1CodesASCII.txt /build/geodata/admin1CodesASCII.txt
 ADD --chmod=444 https://download.geonames.org/export/dump/admin2Codes.txt /build/geodata/admin2Codes.txt
+ADD --chmod=444 https://raw.githubusercontent.com/nvkelso/natural-earth-vector/v5.1.2/geojson/ne_10m_admin_0_countries.geojson /build/geodata/ne_10m_admin_0_countries.geojson
 
 RUN umask 0333 && unzip /build/geodata/cities500.zip -d /build/geodata/ && \
     rm /build/geodata/cities500.zip && date --iso-8601=seconds | tr -d "\n" > /build/geodata/geodata-date.txt
