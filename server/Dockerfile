@@ -106,13 +106,11 @@ RUN ./configure-apt.sh && \
         wget \
         zlib1g && \
     ./install-ffmpeg.sh && \
-    if [ $(arch) = "x86_64" ]; then \
     apt-get install -t unstable --no-install-recommends -yqq \
-        intel-media-va-driver-non-free \
-        intel-opencl-icd \
+        $(if [ $(arch) = "x86_64" ]; then echo "intel-media-va-driver-non-free intel-opencl-icd"; fi) \
         libwebp7 \
         libwebpdemux2 \
-        libwebpmux3; fi && \
+        libwebpmux3 && \
     apt-get remove -yqq jq wget ca-certificates && \
     apt-get autoremove -yqq && \
     apt-get clean && \
