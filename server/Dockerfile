@@ -107,9 +107,7 @@ RUN ./configure-apt.sh && \
         zlib1g && \
     ./install-ffmpeg.sh && \
     apt-get install -t unstable --no-install-recommends -yqq \
-        if [ $(arch) = "x86_64" ]; then \
-        intel-media-va-driver-non-free \
-        intel-opencl-icd; fi \
+        if [ $(arch) = "x86_64" ]; then echo "intel-media-va-driver-non-free intel-opencl-icd"; fi \
         libwebp7 \
         libwebpdemux2 \
         libwebpmux3 && \
