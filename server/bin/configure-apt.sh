@@ -12,6 +12,12 @@ Pin: release a=unstable
 Pin-Priority: 450
 
 Package: *
-Pin: release a=trixie
+Pin: release n=trixie
 Pin-Priority: 450
 EOL
+
+cat > /etc/apt/sources.list.d/trixie.list << EOL
+deb http://deb.debian.org/debian trixie main non-free-firmware
+deb-src http://deb.debian.org/debian trixie main non-free-firmware
+EOL
+
