@@ -13,7 +13,7 @@
     {
       "name": "libraw",
       "version": "0.22.0-SNAPSHOT",
-      "revision": "d3cbbd0e9934898eb28e4963ee99b51928e2acaa"
+      "revision": "70f511871e002942d3e6b60c99fe04ce5c0c605b"
     },
     {
       "name": "libvips",
