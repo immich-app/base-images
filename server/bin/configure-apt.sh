@@ -10,4 +10,8 @@ cat > /etc/apt/preferences.d/preferences << EOL
 Package: *
 Pin: release a=unstable
 Pin-Priority: 450
+
+Package: *
+Pin: release a=trixie
+Pin-Priority: 450
 EOL

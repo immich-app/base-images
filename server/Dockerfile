@@ -13,25 +13,6 @@ RUN ./configure-apt.sh && \
         build-essential \
         cmake \
         jq \
-        perl \
-        libnet-ssleay-perl \
-        libio-socket-ssl-perl \
-        libcapture-tiny-perl \
-        libfile-which-perl \
-        libfile-chdir-perl \
-        libpkgconfig-perl \
-        libffi-checklib-perl \
-        libtest-warnings-perl \
-        libtest-fatal-perl \
-        libtest-needs-perl \
-        libtest2-suite-perl \
-        libsort-versions-perl \
-        libpath-tiny-perl \
-        libtry-tiny-perl \
-        libterm-table-perl \
-        libany-uri-escape-perl \
-        libmojolicious-perl \
-        libfile-slurper-perl \
         libde265-dev \
         libexif-dev \
         libexpat1-dev \
@@ -51,7 +32,9 @@ RUN ./configure-apt.sh && \
         cpanminus && \
     apt-get install -t unstable --no-install-recommends -yqq \
         libdav1d-dev \
-        libwebp-dev
+        libwebp-dev && \
+    apt-get install -t trixie --no-install-recommends -yqq \
+        libio-compress-brotli-perl
 
 COPY bin/* ./
 
