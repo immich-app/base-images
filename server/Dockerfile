@@ -6,6 +6,8 @@ ENV LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH \
     LD_RUN_PATH=/usr/local/lib:$LD_RUN_PATH
 
 COPY bin/configure-apt.sh ./
+
+# when trixie is released, remove build-perllib-compress-brotli.sh and move libio-compress-brotli-perl from trixie to stable
 RUN ./configure-apt.sh && \
     apt-get update && \
     apt-get install --no-install-recommends -yqq \
@@ -42,7 +44,6 @@ RUN ./build-libheif.sh
 RUN ./build-libraw.sh
 RUN ./build-imagemagick.sh
 RUN ./build-libvips.sh
-RUN ./build-perllib-compress-brotli.sh
 RUN ./install-ffmpeg.sh
 
 ADD https://download.geonames.org/export/dump/cities500.zip /build/geodata/cities500.zip

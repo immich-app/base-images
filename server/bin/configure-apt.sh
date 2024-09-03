@@ -3,7 +3,7 @@
 set -e
 
 sed -i -e's/ main/ main contrib non-free non-free-firmware/g' /etc/apt/sources.list.d/debian.sources
-sed -i -e's/ bookworm-updates/ bookworm-updates sid/g' /etc/apt/sources.list.d/debian.sources
+sed -i -e's/ bookworm-updates/ bookworm-updates trixie sid/g' /etc/apt/sources.list.d/debian.sources
 
 # default priority is 500, so we set unstable to 450 to prefer stable packages
 cat > /etc/apt/preferences.d/preferences << EOL
@@ -14,10 +14,5 @@ Pin-Priority: 450
 Package: *
 Pin: release n=trixie
 Pin-Priority: 450
-EOL
-
-cat > /etc/apt/sources.list.d/trixie.list << EOL
-deb http://deb.debian.org/debian trixie main non-free-firmware
-deb-src http://deb.debian.org/debian trixie main non-free-firmware
 EOL
 
