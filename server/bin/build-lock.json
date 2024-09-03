@@ -2,13 +2,13 @@
   "sources": [
     {
       "name": "imagemagick",
-      "version": "7.1.1-24",
-      "revision": "963f5fa2a3c87b362e2b6b29a31bff447b75925b"
+      "version": "7.1.1-38",
+      "revision": "b0ab92265bab638e6ecd2f18b45977c38771c671"
     },
     {
       "name": "libheif",
-      "version": "1.18.0",
-      "revision": "537d66852629e23ca778ef717343be8f657c0e79"
+      "version": "1.18.2",
+      "revision": "bf35e9eb25af8f2b7917996ad9ba849d922f8d15"
     },
     {
       "name": "libraw",
@@ -17,17 +17,17 @@
     },
     {
       "name": "libvips",
-      "version": "8.15.2",
-      "revision": "f18403d7bf49b574a2a1c6887dbe9c696a5125fc"
+      "version": "8.15.3",
+      "revision": "1a86d4e153536e035d1907652391a26f77cbe1b8"
     }
   ],
   "packages": [
     {
       "name": "ffmpeg",
-      "version": "6.0.1-6",
+      "version": "6.0.1-8",
       "sha256": {
-        "amd64": "92d859895f7cb2f6428fe7e1299ce14959948a1e48a0b22a339c17f66970c45e",
-        "arm64": "c54657f94247bb082fa04ec2e9ab3d68a8ae8d4ff879f52a4cea18f073cdf3ba"
+        "amd64": "dab2d0b5247dc20f29ada768842c988633834bfecfe1601580f964649979b865",
+        "arm64": "5fe705505898e25c3724451c26c90b4d5b6e25a8e1e6b825a4601b4d7819a160"
       }
     }
   ]
