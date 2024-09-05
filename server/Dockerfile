@@ -32,7 +32,7 @@ RUN ./configure-apt.sh && \
         wget \
         zlib1g \
         cpanminus && \
-    apt-get install -t unstable --no-install-recommends -yqq \
+    apt-get install -t testing --no-install-recommends -yqq \
         libdav1d-dev \
         libwebp-dev && \
     apt-get install -t testing --no-install-recommends -yqq \
@@ -89,12 +89,12 @@ RUN ./configure-apt.sh && \
         tini \
         wget \
         zlib1g \
-        libwebp7 \
-        libwebpdemux2 \
-        libwebpmux3 \
         ocl-icd-libopencl1 && \
-    ./install-ffmpeg.sh && \
-    if [ $(arch) = "x86_64" ]; then \
+    ./install-ffmpeg.sh
+
+    RUN apt-get install -t testing --no-install-recommends -yqq libwebp7 libwebpdemux2 libwebpmux3
+
+    RUN if [ $(arch) = "x86_64" ]; then \
       apt-get install --no-install-recommends -yqq intel-media-va-driver-non-free && \
       wget https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.17193.4/intel-igc-core_1.0.17193.4_amd64.deb && \
       wget https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.17193.4/intel-igc-opencl_1.0.17193.4_amd64.deb && \
