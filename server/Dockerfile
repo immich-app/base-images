@@ -1,4 +1,4 @@
-FROM node:20.17.0-bookworm@sha256:a4d1de4c7339eabcf78a90137dfd551b798829e3ef3e399e0036ac454afa1291 as dev
+FROM node:20.17.0-bookworm@sha256:a4d1de4c7339eabcf78a90137dfd551b798829e3ef3e399e0036ac454afa1291 AS dev
 
 WORKDIR /usr/src/app
 
@@ -6,6 +6,8 @@ ENV LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH \
     LD_RUN_PATH=/usr/local/lib:$LD_RUN_PATH
 
 COPY bin/configure-apt.sh ./
+
+# when trixie is released, remove build-perllib-compress-brotli.sh and move libio-compress-brotli-perl from testing to stable
 RUN ./configure-apt.sh && \
     apt-get update && \
     apt-get install --no-install-recommends -yqq \
@@ -13,25 +15,6 @@ RUN ./configure-apt.sh && \
         build-essential \
         cmake \
         jq \
-        perl \
-        libnet-ssleay-perl \
-        libio-socket-ssl-perl \
-        libcapture-tiny-perl \
-        libfile-which-perl \
-        libfile-chdir-perl \
-        libpkgconfig-perl \
-        libffi-checklib-perl \
-        libtest-warnings-perl \
-        libtest-fatal-perl \
-        libtest-needs-perl \
-        libtest2-suite-perl \
-        libsort-versions-perl \
-        libpath-tiny-perl \
-        libtry-tiny-perl \
-        libterm-table-perl \
-        libany-uri-escape-perl \
-        libmojolicious-perl \
-        libfile-slurper-perl \
         libde265-dev \
         libexif-dev \
         libexpat1-dev \
@@ -51,7 +34,9 @@ RUN ./configure-apt.sh && \
         cpanminus && \
     apt-get install -t unstable --no-install-recommends -yqq \
         libdav1d-dev \
-        libwebp-dev
+        libwebp-dev && \
+    apt-get install -t testing --no-install-recommends -yqq \
+        libio-compress-brotli-perl
 
 COPY bin/* ./
 
@@ -59,7 +44,6 @@ RUN ./build-libheif.sh
 RUN ./build-libraw.sh
 RUN ./build-imagemagick.sh
 RUN ./build-libvips.sh
-RUN ./build-perllib-compress-brotli.sh
 RUN ./install-ffmpeg.sh
 
 ADD https://download.geonames.org/export/dump/cities500.zip /build/geodata/cities500.zip
@@ -70,7 +54,7 @@ ADD --chmod=444 https://raw.githubusercontent.com/nvkelso/natural-earth-vector/v
 RUN umask 0333 && unzip /build/geodata/cities500.zip -d /build/geodata/ && \
     rm /build/geodata/cities500.zip && date --iso-8601=seconds | tr -d "\n" > /build/geodata/geodata-date.txt
 
-FROM node:20.17.0-bookworm-slim@sha256:9fb20391a0320aed25636d8312f4332f9be734c5acef4c94722048c2bed5a87d as prod
+FROM node:20.17.0-bookworm-slim@sha256:9fb20391a0320aed25636d8312f4332f9be734c5acef4c94722048c2bed5a87d AS prod
 
 WORKDIR /build
 
