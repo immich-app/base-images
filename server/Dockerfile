@@ -34,8 +34,7 @@ RUN ./configure-apt.sh && \
         cpanminus && \
     apt-get install -t testing --no-install-recommends -yqq \
         libdav1d-dev \
-        libwebp-dev && \
-    apt-get install -t testing --no-install-recommends -yqq \
+        libwebp-dev \
         libio-compress-brotli-perl
 
 COPY bin/* ./
@@ -95,12 +94,12 @@ RUN ./configure-apt.sh && \
     RUN apt-get install -t testing --no-install-recommends -yqq libwebp7 libwebpdemux2 libwebpmux3
 
     RUN if [ $(arch) = "x86_64" ]; then \
-      apt-get install --no-install-recommends -yqq intel-media-va-driver-non-free && \
       wget https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.17193.4/intel-igc-core_1.0.17193.4_amd64.deb && \
       wget https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.17193.4/intel-igc-opencl_1.0.17193.4_amd64.deb && \
       wget https://github.com/intel/compute-runtime/releases/download/24.26.30049.6/intel-opencl-icd_24.26.30049.6_amd64.deb && \
       wget https://github.com/intel/compute-runtime/releases/download/24.26.30049.6/libigdgmm12_22.3.20_amd64.deb && \
       dpkg -i *.deb && \
+      apt-get install -t testing --no-install-recommends -yqq intel-media-va-driver-non-free && \
       rm *.deb; \
     fi && \
     apt-get remove -yqq jq wget ca-certificates && \
