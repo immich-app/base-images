@@ -7,7 +7,7 @@ ENV LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH \
 
 COPY bin/configure-apt.sh ./
 
-# when trixie is released, remove build-perllib-compress-brotli.sh and move libio-compress-brotli-perl from trixie to stable
+# when trixie is released, remove build-perllib-compress-brotli.sh and move libio-compress-brotli-perl from testing to stable
 RUN ./configure-apt.sh && \
     apt-get update && \
     apt-get install --no-install-recommends -yqq \
@@ -35,7 +35,7 @@ RUN ./configure-apt.sh && \
     apt-get install -t unstable --no-install-recommends -yqq \
         libdav1d-dev \
         libwebp-dev && \
-    apt-get install -t trixie --no-install-recommends -yqq \
+    apt-get install -t testing --no-install-recommends -yqq \
         libio-compress-brotli-perl
 
 COPY bin/* ./
