@@ -121,6 +121,6 @@ COPY --from=dev /usr/local/lib/ /usr/local/lib/
 COPY --from=dev /build/geodata/ /build/geodata/
 
 WORKDIR /usr/src/app
-ENV LD_LIBRARY_PATH=/usr/lib/jellyfin-ffmpeg/lib:$LD_LIBRARY_PATH
+ENV LD_LIBRARY_PATH=/usr/lib/jellyfin-ffmpeg/lib:/usr/lib/wsl/lib:$LD_LIBRARY_PATH
 
 RUN ldconfig /usr/local/lib
