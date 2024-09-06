@@ -1,4 +1,4 @@
-FROM node:20.17.0-bookworm@sha256:4bc7ea5c063e6879b1888775595f48269d125b5f4ecaa6dfe6927397360938e8 AS dev
+FROM node:20.17.0-bookworm@sha256:48db4f6ea21d134be744207225753a1730c4bc1b4cdf836d44511c36bf0e34d7 AS dev
 
 WORKDIR /usr/src/app
 
@@ -31,11 +31,10 @@ RUN ./configure-apt.sh && \
         wget \
         zlib1g \
         cpanminus && \
-    apt-get install -t unstable --no-install-recommends -yqq \
-        libdav1d-dev \
-        libwebp-dev && \
     apt-get install -t testing --no-install-recommends -yqq \
+        libdav1d-dev \
         libjxl-dev \
+        libwebp-dev \
         libio-compress-brotli-perl
 
 COPY bin/* ./
@@ -87,15 +86,21 @@ RUN ./configure-apt.sh && \
         mesa-vulkan-drivers \
         tini \
         wget \
-        zlib1g && \
-    ./install-ffmpeg.sh && \
-    apt-get install -t unstable --no-install-recommends -yqq \
-        $(if [ $(arch) = "x86_64" ]; then echo "intel-media-va-driver-non-free intel-opencl-icd"; fi) \
-        libwebp7 \
-        libwebpdemux2 \
-        libwebpmux3 && \
-    apt-get install -t testing --no-install-recommends -yqq \
-        libjxl0.9 && \
+        zlib1g \
+        ocl-icd-libopencl1 && \
+    ./install-ffmpeg.sh
+
+    RUN apt-get install -t testing --no-install-recommends -yqq libwebp7 libwebpdemux2 libwebpmux3 libjxl0.9
+
+    RUN if [ $(arch) = "x86_64" ]; then \
+      wget https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.17193.4/intel-igc-core_1.0.17193.4_amd64.deb && \
+      wget https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.17193.4/intel-igc-opencl_1.0.17193.4_amd64.deb && \
+      wget https://github.com/intel/compute-runtime/releases/download/24.26.30049.6/intel-opencl-icd_24.26.30049.6_amd64.deb && \
+      wget https://github.com/intel/compute-runtime/releases/download/24.26.30049.6/libigdgmm12_22.3.20_amd64.deb && \
+      dpkg -i *.deb && \
+      apt-get install -t testing --no-install-recommends -yqq intel-media-va-driver-non-free && \
+      rm *.deb; \
+    fi && \
     apt-get remove -yqq jq wget ca-certificates && \
     apt-get autoremove -yqq && \
     apt-get clean && \
