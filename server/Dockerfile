@@ -21,7 +21,6 @@ RUN ./configure-apt.sh && \
         libglib2.0-dev \
         libgsf-1-dev \
         libjpeg62-turbo-dev \
-        libjxl-dev \
         liblcms2-2 \
         liborc-0.4-dev \
         librsvg2-dev \
@@ -36,6 +35,7 @@ RUN ./configure-apt.sh && \
         libdav1d-dev \
         libwebp-dev && \
     apt-get install -t testing --no-install-recommends -yqq \
+        libjxl-dev \
         libio-compress-brotli-perl
 
 COPY bin/* ./
@@ -73,7 +73,6 @@ RUN ./configure-apt.sh && \
         libgomp1 \
         libgsf-1-114 \
         libjpeg62-turbo \
-        libjxl0.7 \
         liblcms2-2 \
         liblqr-1-0 \
         libltdl7 \
@@ -95,6 +94,8 @@ RUN ./configure-apt.sh && \
         libwebp7 \
         libwebpdemux2 \
         libwebpmux3 && \
+    apt-get install -t testing --no-install-recommends -yqq \
+        libjxl0.9 && \
     apt-get remove -yqq jq wget ca-certificates && \
     apt-get autoremove -yqq && \
     apt-get clean && \
