@@ -88,29 +88,35 @@ RUN ./configure-apt.sh && \
         wget \
         zlib1g \
         ocl-icd-libopencl1 && \
-    ./install-ffmpeg.sh
-
-    RUN apt-get install -t testing --no-install-recommends -yqq libwebp7 libwebpdemux2 libwebpmux3 libjxl0.9
-
-    RUN if [ $(arch) = "x86_64" ]; then \
-      wget https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.17193.4/intel-igc-core_1.0.17193.4_amd64.deb && \
-      wget https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.17193.4/intel-igc-opencl_1.0.17193.4_amd64.deb && \
-      wget https://github.com/intel/compute-runtime/releases/download/24.26.30049.6/intel-opencl-icd_24.26.30049.6_amd64.deb && \
-      wget https://github.com/intel/compute-runtime/releases/download/24.26.30049.6/libigdgmm12_22.3.20_amd64.deb && \
-      dpkg -i *.deb && \
-      apt-get install -t testing --no-install-recommends -yqq intel-media-va-driver-non-free && \
-      rm *.deb; \
+    ./install-ffmpeg.sh && \
+    apt-get install -t testing --no-install-recommends -yqq \
+        libio-compress-brotli-perl \
+        libwebp7 \
+        libwebpdemux2 \
+        libwebpmux3 \
+        libjxl0.9 && \
+    if [ $(arch) = "x86_64" ]; then \
+        wget https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.17193.4/intel-igc-core_1.0.17193.4_amd64.deb && \
+        wget https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.17193.4/intel-igc-opencl_1.0.17193.4_amd64.deb && \
+        wget https://github.com/intel/compute-runtime/releases/download/24.26.30049.6/intel-opencl-icd_24.26.30049.6_amd64.deb && \
+        wget https://github.com/intel/compute-runtime/releases/download/24.26.30049.6/libigdgmm12_22.3.20_amd64.deb && \
+        dpkg -i *.deb && \
+        apt-get install -t testing --no-install-recommends -yqq intel-media-va-driver-non-free; \
     fi && \
     apt-get remove -yqq jq wget ca-certificates && \
     apt-get autoremove -yqq && \
     apt-get clean && \
-    rm -rf /var/lib/apt/lists/* && \
-    rm install-ffmpeg.sh configure-apt.sh
+    rm -rf \
+        configure-apt.sh \
+        install-ffmpeg.sh \
+        *.deb \
+        /var/lib/apt/lists
 
 COPY --from=dev /usr/local/lib/ /usr/local/lib/
 COPY --from=dev /build/geodata/ /build/geodata/
 
 WORKDIR /usr/src/app
+
 ENV LD_LIBRARY_PATH=/usr/lib/jellyfin-ffmpeg/lib:/usr/lib/wsl/lib:$LD_LIBRARY_PATH
 
 RUN ldconfig /usr/local/lib
