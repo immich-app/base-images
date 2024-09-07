@@ -21,7 +21,6 @@ RUN ./configure-apt.sh && \
         libglib2.0-dev \
         libgsf-1-dev \
         libjpeg62-turbo-dev \
-        libjxl-dev \
         liblcms2-2 \
         liborc-0.4-dev \
         librsvg2-dev \
@@ -34,6 +33,7 @@ RUN ./configure-apt.sh && \
         cpanminus && \
     apt-get install -t testing --no-install-recommends -yqq \
         libdav1d-dev \
+        libjxl-dev \
         libwebp-dev \
         libio-compress-brotli-perl
 
@@ -72,7 +72,6 @@ RUN ./configure-apt.sh && \
         libgomp1 \
         libgsf-1-114 \
         libjpeg62-turbo \
-        libjxl0.7 \
         liblcms2-2 \
         liblqr-1-0 \
         libltdl7 \
@@ -94,7 +93,8 @@ RUN ./configure-apt.sh && \
         libio-compress-brotli-perl \
         libwebp7 \
         libwebpdemux2 \
-        libwebpmux3 && \
+        libwebpmux3 \
+        libjxl0.9 && \
     if [ $(arch) = "x86_64" ]; then \
         wget https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.17193.4/intel-igc-core_1.0.17193.4_amd64.deb && \
         wget https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.17193.4/intel-igc-opencl_1.0.17193.4_amd64.deb && \
