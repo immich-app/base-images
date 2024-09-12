@@ -24,10 +24,10 @@
   "packages": [
     {
       "name": "ffmpeg",
-      "version": "6.0.1-8",
+      "version": "7.0.2-1",
       "sha256": {
-        "amd64": "dab2d0b5247dc20f29ada768842c988633834bfecfe1601580f964649979b865",
-        "arm64": "5fe705505898e25c3724451c26c90b4d5b6e25a8e1e6b825a4601b4d7819a160"
+        "amd64": "f5e30d30d6969ffb48ab1f813158e00b5c174d80a98d8bac0b86820f538d7560",
+        "arm64": "b4830ee20a7018666098f633223551d25822f5832d13e34bf602ad500e5cc3e6"
       }
     }
   ]
