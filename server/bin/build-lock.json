@@ -11,6 +11,11 @@
       "revision": "bf35e9eb25af8f2b7917996ad9ba849d922f8d15"
     },
     {
+      "name": "libjxl",
+      "version": "0.11.0",
+      "revision": "4df1e9eccdf86b8df4c0c7c08f529263906f9c4f"
+    },
+    {
       "name": "libraw",
       "version": "0.22.0-SNAPSHOT",
       "revision": "70f511871e002942d3e6b60c99fe04ce5c0c605b"

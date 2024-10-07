@@ -15,6 +15,7 @@ RUN ./configure-apt.sh && \
         build-essential \
         cmake \
         jq \
+        libbrotli-dev \
         libde265-dev \
         libexif-dev \
         libexpat1-dev \
@@ -33,7 +34,7 @@ RUN ./configure-apt.sh && \
         cpanminus && \
     apt-get install -t testing --no-install-recommends -yqq \
         libdav1d-dev \
-        libjxl-dev \
+        libhwy-dev \
         libwebp-dev \
         libio-compress-brotli-perl
 
@@ -41,6 +42,7 @@ COPY bin/* ./
 
 RUN ./build-libheif.sh
 RUN ./build-libraw.sh
+RUN ./build-libjxl.sh
 RUN ./build-imagemagick.sh
 RUN ./build-libvips.sh
 RUN ./install-ffmpeg.sh
@@ -93,8 +95,7 @@ RUN ./configure-apt.sh && \
         libio-compress-brotli-perl \
         libwebp7 \
         libwebpdemux2 \
-        libwebpmux3 \
-        libjxl0.9 && \
+        libwebpmux3 && \
     if [ $(arch) = "x86_64" ]; then \
         wget https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.17193.4/intel-igc-core_1.0.17193.4_amd64.deb && \
         wget https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.17193.4/intel-igc-opencl_1.0.17193.4_amd64.deb && \
