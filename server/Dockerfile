@@ -40,9 +40,9 @@ RUN ./configure-apt.sh && \
 
 COPY bin/* ./
 
+RUN ./build-libjxl.sh
 RUN ./build-libheif.sh
 RUN ./build-libraw.sh
-RUN ./build-libjxl.sh
 RUN ./build-imagemagick.sh
 RUN ./build-libvips.sh
 RUN ./install-ffmpeg.sh
@@ -73,6 +73,7 @@ RUN ./configure-apt.sh && \
         libglib2.0-0 \
         libgomp1 \
         libgsf-1-114 \
+        # libjpeg62-turbo-dev is just for building libvips; the final image uses jpegli (/usr/local/lib/libjpeg.so.62) built alongside libjxl
         libjpeg62-turbo \
         liblcms2-2 \
         liblqr-1-0 \
@@ -94,8 +95,8 @@ RUN ./configure-apt.sh && \
     apt-get install -t testing --no-install-recommends -yqq \
         libio-compress-brotli-perl \
         libwebp7 \
-        libwebpdemux2 \
-        libwebpmux3 && \
+        libwebpmux3 \  
+        libhwy1t64 && \
     if [ $(arch) = "x86_64" ]; then \
         wget https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.17193.4/intel-igc-core_1.0.17193.4_amd64.deb && \
         wget https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.17193.4/intel-igc-opencl_1.0.17193.4_amd64.deb && \
@@ -107,6 +108,7 @@ RUN ./configure-apt.sh && \
     apt-get remove -yqq jq wget ca-certificates && \
     apt-get autoremove -yqq && \
     apt-get clean && \
+    dpkg -r --force-depends libjpeg62-turbo && \
     rm -rf \
         configure-apt.sh \
         install-ffmpeg.sh \
