@@ -23,7 +23,6 @@ RUN ./configure-apt.sh && \
         libgsf-1-dev \
         libjpeg62-turbo-dev \
         liblcms2-2 \
-        liborc-0.4-dev \
         librsvg2-dev \
         libspng-dev \
         meson \
@@ -81,7 +80,6 @@ RUN ./configure-apt.sh && \
         libmimalloc2.0 \
         libopenexr-3-1-30 \
         libopenjp2-7 \
-        liborc-0.4-0 \
         librsvg2-2 \
         libspng0 \
         mesa-utils \
