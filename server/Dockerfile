@@ -21,6 +21,7 @@ RUN ./configure-apt.sh && \
         libexpat1-dev \
         libglib2.0-dev \
         libgsf-1-dev \
+        # libjpeg62-turbo-dev is just for building libvips; the final image uses jpegli (/usr/local/lib/libjpeg.so.62) built alongside libjxl
         libjpeg62-turbo-dev \
         liblcms2-2 \
         librsvg2-dev \
@@ -72,8 +73,6 @@ RUN ./configure-apt.sh && \
         libglib2.0-0 \
         libgomp1 \
         libgsf-1-114 \
-        # libjpeg62-turbo-dev is just for building libvips; the final image uses jpegli (/usr/local/lib/libjpeg.so.62) built alongside libjxl
-        libjpeg62-turbo \
         liblcms2-2 \
         liblqr-1-0 \
         libltdl7 \
