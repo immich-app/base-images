@@ -15,14 +15,15 @@ RUN ./configure-apt.sh && \
         build-essential \
         cmake \
         jq \
+        libbrotli-dev \
         libde265-dev \
         libexif-dev \
         libexpat1-dev \
         libglib2.0-dev \
         libgsf-1-dev \
+        # libjpeg62-turbo-dev is just for building libvips; the final image uses jpegli (/usr/local/lib/libjpeg.so.62) built alongside libjxl
         libjpeg62-turbo-dev \
         liblcms2-2 \
-        liborc-0.4-dev \
         librsvg2-dev \
         libspng-dev \
         meson \
@@ -33,12 +34,13 @@ RUN ./configure-apt.sh && \
         cpanminus && \
     apt-get install -t testing --no-install-recommends -yqq \
         libdav1d-dev \
-        libjxl-dev \
+        libhwy-dev \
         libwebp-dev \
         libio-compress-brotli-perl
 
 COPY bin/* ./
 
+RUN ./build-libjxl.sh
 RUN ./build-libheif.sh
 RUN ./build-libraw.sh
 RUN ./build-imagemagick.sh
@@ -71,14 +73,12 @@ RUN ./configure-apt.sh && \
         libglib2.0-0 \
         libgomp1 \
         libgsf-1-114 \
-        libjpeg62-turbo \
         liblcms2-2 \
         liblqr-1-0 \
         libltdl7 \
         libmimalloc2.0 \
         libopenexr-3-1-30 \
         libopenjp2-7 \
-        liborc-0.4-0 \
         librsvg2-2 \
         libspng0 \
         mesa-utils \
@@ -92,9 +92,8 @@ RUN ./configure-apt.sh && \
     apt-get install -t testing --no-install-recommends -yqq \
         libio-compress-brotli-perl \
         libwebp7 \
-        libwebpdemux2 \
-        libwebpmux3 \
-        libjxl0.9 && \
+        libwebpmux3 \  
+        libhwy1t64 && \
     if [ $(arch) = "x86_64" ]; then \
         wget https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.17193.4/intel-igc-core_1.0.17193.4_amd64.deb && \
         wget https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.17193.4/intel-igc-opencl_1.0.17193.4_amd64.deb && \
@@ -106,6 +105,7 @@ RUN ./configure-apt.sh && \
     apt-get remove -yqq jq wget ca-certificates && \
     apt-get autoremove -yqq && \
     apt-get clean && \
+    dpkg -r --force-depends libjpeg62-turbo && \
     rm -rf \
         configure-apt.sh \
         install-ffmpeg.sh \
