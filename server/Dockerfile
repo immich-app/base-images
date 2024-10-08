@@ -92,6 +92,7 @@ RUN ./configure-apt.sh && \
     apt-get install -t testing --no-install-recommends -yqq \
         libio-compress-brotli-perl \
         libwebp7 \
+        libwebpdemux2 \
         libwebpmux3 \  
         libhwy1t64 && \
     if [ $(arch) = "x86_64" ]; then \
