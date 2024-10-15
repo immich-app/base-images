@@ -20,6 +20,7 @@ git clone https://github.com/libjxl/libjxl.git
 cd libjxl
 git reset --hard "$LIBJXL_REVISION"
 git submodule update --init --recursive --depth 1 --recommend-shallow
+git apply ../jpegli-empty-dht-marker.patch # adapted from https://github.com/libjxl/libjxl/pull/2704
 
 mkdir build
 cd build
