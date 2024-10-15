@@ -6,7 +6,7 @@ set -e
 
 git clone https://github.com/strukturag/libheif.git
 cd libheif
-git reset --hard $LIBHEIF_REVISION
+git reset --hard "$LIBHEIF_REVISION"
 
 mkdir build
 cd build

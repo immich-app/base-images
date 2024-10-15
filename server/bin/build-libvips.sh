@@ -6,7 +6,7 @@ set -e
 
 git clone https://github.com/libvips/libvips.git
 cd libvips
-git reset --hard $LIBVIPS_REVISION
+git reset --hard "$LIBVIPS_REVISION"
 
 meson setup build --buildtype=release --libdir=lib -Dintrospection=disabled -Dtiff=disabled
 cd build

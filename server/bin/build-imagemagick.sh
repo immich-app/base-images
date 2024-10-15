@@ -6,10 +6,10 @@ set -e
 
 git clone https://github.com/ImageMagick/ImageMagick.git
 cd ImageMagick
-git reset --hard $IMAGEMAGICK_REVISION
+git reset --hard "$IMAGEMAGICK_REVISION"
 
 ./configure --with-modules
-make -j$(nproc)
+make -j"$(nproc)"
 make install
 cd .. && rm -rf ImageMagick
 ldconfig /usr/local/lib
