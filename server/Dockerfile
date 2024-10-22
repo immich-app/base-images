@@ -93,8 +93,9 @@ RUN ./configure-apt.sh && \
         libio-compress-brotli-perl \
         libwebp7 \
         libwebpdemux2 \
-        libwebpmux3 \  
-        libhwy1t64 && \
+        libwebpmux3 \
+        libhwy1t64 \
+        postgresql-client-17 && \
     if [ $(arch) = "x86_64" ]; then \
         wget https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.17193.4/intel-igc-core_1.0.17193.4_amd64.deb && \
         wget https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.17193.4/intel-igc-opencl_1.0.17193.4_amd64.deb && \
