@@ -36,7 +36,8 @@ RUN ./configure-apt.sh && \
         libdav1d-dev \
         libhwy-dev \
         libwebp-dev \
-        libio-compress-brotli-perl
+        libio-compress-brotli-perl \
+        postgresql-client-17
 
 COPY bin/* ./
 
