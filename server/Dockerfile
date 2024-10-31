@@ -108,12 +108,14 @@ RUN ./configure-apt.sh && \
     apt-get remove -yqq jq wget ca-certificates && \
     apt-get autoremove -yqq && \
     apt-get clean && \
-    dpkg -r --force-depends libjpeg62-turbo && \
     rm -rf \
         configure-apt.sh \
         install-ffmpeg.sh \
         *.deb \
-        /var/lib/apt/lists
+        /var/lib/apt/lists \
+        /usr/lib/$(arch)-linux-gnu/libjpeg.so* \
+        /usr/share/doc/libjpeg62-turbo \
+        /usr/share/lintian/overrides/libjpeg62-turbo
 
 COPY --from=dev /usr/local/lib/ /usr/local/lib/
 COPY --from=dev /build/geodata/ /build/geodata/
