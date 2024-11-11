@@ -13,13 +13,14 @@ cd build
 cmake --preset=release-noplugins \
     -DWITH_DAV1D=ON \
     -DENABLE_PARALLEL_TILE_DECODING=ON \
-    -DENABLE_LIBSHARPYUV=ON \
-    -DENABLE_LIBDE265=ON \
+    -DWITH_LIBSHARPYUV=ON \
+    -DWITH_LIBDE265=ON \
     -DWITH_AOM_DECODER=OFF \
     -DWITH_AOM_ENCODER=OFF \
     -DWITH_X265=OFF \
     -DWITH_EXAMPLES=OFF \
-    -DLIBJPEG_TURBO_VERSION_NUMBER=0 \
+    -DWITH_JPEG_DECODER=OFF \
+    -DWITH_JPEG_ENCODER=OFF \
     ..
 make install
 cd ../.. && rm -rf libheif
