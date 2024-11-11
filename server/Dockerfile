@@ -31,13 +31,17 @@ RUN ./configure-apt.sh && \
         pkg-config \
         wget \
         zlib1g \
-        cpanminus && \
+        cpanminus \
+        wget \
+        postgresql-client-14 \
+        postgresql-client-15 \
+        postgresql-client-16 \
+        postgresql-client-17 && \
     apt-get install -t testing --no-install-recommends -yqq \
         libdav1d-dev \
         libhwy-dev \
         libwebp-dev \
-        libio-compress-brotli-perl \
-        postgresql-client-17
+        libio-compress-brotli-perl
 
 COPY bin/* ./
 
@@ -62,10 +66,11 @@ WORKDIR /build
 
 COPY bin/build-lock.json bin/configure-apt.sh bin/install-ffmpeg.sh  ./
 
-RUN ./configure-apt.sh && \
+RUN apt-get update && \
+    apt-get install curl ca-certificates --no-install-recommends -yqq && \
+    ./configure-apt.sh && \
     apt-get update && \
     apt-get install --no-install-recommends -yqq \
-        ca-certificates \
         jq \
         libde265-0 \
         libexif12 \
@@ -88,15 +93,18 @@ RUN ./configure-apt.sh && \
         tini \
         wget \
         zlib1g \
-        ocl-icd-libopencl1 && \
+        ocl-icd-libopencl1 \
+        postgresql-client-14 \
+        postgresql-client-15 \
+        postgresql-client-16 \
+        postgresql-client-17 && \
     ./install-ffmpeg.sh && \
     apt-get install -t testing --no-install-recommends -yqq \
         libio-compress-brotli-perl \
         libwebp7 \
         libwebpdemux2 \
         libwebpmux3 \
-        libhwy1t64 \
-        postgresql-client-17 && \
+        libhwy1t64 && \
     if [ $(arch) = "x86_64" ]; then \
         wget https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.17193.4/intel-igc-core_1.0.17193.4_amd64.deb && \
         wget https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.17193.4/intel-igc-opencl_1.0.17193.4_amd64.deb && \
