@@ -29,10 +29,10 @@
   "packages": [
     {
       "name": "ffmpeg",
-      "version": "7.0.2-5",
+      "version": "7.0.2-6",
       "sha256": {
-        "amd64": "3bc5a4f92a751c0d0acd81ed678440504eaaed60ebb3b8884e1ccb3307ec68d8",
-        "arm64": "ae25cf837098151f849c50bb8672d097cf4c81e47fb38bdb4ab7c41c8fcd3f75"
+        "amd64": "b1af13a8cf6d0ad04df5dfb74f7dc31d0434ad82f35ca7aae2aa917dc08b0fec",
+        "arm64": "d8c4fc774cb3fced172046b8d71659c2b24b34720c679aac8d6e2c29620e7967"
       }
     }
   ]
