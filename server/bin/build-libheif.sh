@@ -19,6 +19,7 @@ cmake --preset=release-noplugins \
     -DWITH_AOM_ENCODER=OFF \
     -DWITH_X265=OFF \
     -DWITH_EXAMPLES=OFF \
+    -DLIBJPEG_TURBO_VERSION_NUMBER=0 \
     ..
 make install
 cd ../.. && rm -rf libheif
