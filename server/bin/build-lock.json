@@ -2,13 +2,13 @@
   "sources": [
     {
       "name": "imagemagick",
-      "version": "7.1.1-38",
-      "revision": "b0ab92265bab638e6ecd2f18b45977c38771c671"
+      "version": "7.1.1-40",
+      "revision": "ed93f7fe0313ae51b10517f6f980127dccd907d5"
     },
     {
       "name": "libheif",
-      "version": "1.18.2",
-      "revision": "bf35e9eb25af8f2b7917996ad9ba849d922f8d15"
+      "version": "1.19.3",
+      "revision": "65b0e04ee7e3abebcc55bf2f77d7083823c2d07a"
     },
     {
       "name": "libjxl",
@@ -17,8 +17,8 @@
     },
     {
       "name": "libraw",
-      "version": "0.22.0-SNAPSHOT",
-      "revision": "70f511871e002942d3e6b60c99fe04ce5c0c605b"
+      "version": "0.21.3",
+      "revision": "261c18ca0f1f9b83a53947b77751050d90d18e67"
     },
     {
       "name": "libvips",

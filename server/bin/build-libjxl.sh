@@ -44,6 +44,7 @@ cmake \
   -DJPEGLI_LIBJPEG_LIBRARY_SOVERSION="${JPEGLI_LIBJPEG_LIBRARY_SOVERSION}" \
   -DJPEGLI_LIBJPEG_LIBRARY_VERSION="${JPEGLI_LIBJPEG_LIBRARY_VERSION}" \
   ..
+echo "Building libjxl using $(nproc) threads"
 cmake --build . -- -j"$(nproc)"
 cmake --install .
 cd ../.. && rm -rf libjxl
