@@ -16,3 +16,7 @@ Pin: release a=testing
 Pin-Priority: 450
 EOL
 
+# Setup postgresql repository
+install -d /usr/share/postgresql-common/pgdg
+curl -o /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc --fail https://www.postgresql.org/media/keys/ACCC4CF8.asc
+echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt bookworm-pgdg main" > /etc/apt/sources.list.d/pgdg.list
