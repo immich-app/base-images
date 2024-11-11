@@ -18,9 +18,7 @@ cmake --preset=release-noplugins \
     -DWITH_AOM_DECODER=OFF \
     -DWITH_AOM_ENCODER=OFF \
     -DWITH_X265=OFF \
-    -DWITH_EXAMPLES=OFF \
-    -DWITH_JPEG_DECODER=OFF \
-    -DWITH_JPEG_ENCODER=OFF \
+    -DWITH_EXAMPLES=OFF
     ..
 make install
 cd ../.. && rm -rf libheif
