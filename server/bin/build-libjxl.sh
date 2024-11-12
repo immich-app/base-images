@@ -43,7 +43,9 @@ cmake \
   -DJPEGXL_ENABLE_PLUGINS=ON \
   -DJPEGLI_LIBJPEG_LIBRARY_SOVERSION="${JPEGLI_LIBJPEG_LIBRARY_SOVERSION}" \
   -DJPEGLI_LIBJPEG_LIBRARY_VERSION="${JPEGLI_LIBJPEG_LIBRARY_VERSION}" \
+  -DLIBJPEG_TURBO_VERSION_NUMBER=2001005 \
   ..
+echo "Building libjxl using $(nproc) threads"
 cmake --build . -- -j"$(nproc)"
 cmake --install .
 cd ../.. && rm -rf libjxl

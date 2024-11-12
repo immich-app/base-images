@@ -10,6 +10,7 @@ git reset --hard "$LIBRAW_REVISION"
 
 autoreconf --install
 ./configure
+echo "Building libraw using $(nproc) threads"
 make -j"$(nproc)"
 make install
 cd .. && rm -rf libraw
