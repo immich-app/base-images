@@ -13,12 +13,19 @@ jobs:
   set_tag:
     runs-on: ubuntu-latest
     steps:
+      - name: Generate a token
+        id: generate-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.PUSH_O_MATIC_APP_ID }}
+          private-key: ${{ secrets.PUSH_O_MATIC_APP_KEY }}
+
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           ref: "main"
           fetch-depth: 0
-          token: ${{secrets.PAT}}
+          token: ${{ steps.generate-token.outputs.token }}
 
       - name: Create and push new tag
         run: |
