@@ -60,7 +60,7 @@ ADD --chmod=444 https://raw.githubusercontent.com/nvkelso/natural-earth-vector/v
 RUN umask 0333 && unzip /build/geodata/cities500.zip -d /build/geodata/ && \
     rm /build/geodata/cities500.zip && date --iso-8601=seconds | tr -d "\n" > /build/geodata/geodata-date.txt
 
-FROM node:22.13.1-bookworm-slim@sha256:2945d83558df87ea0087972d7c14c752a0dcfe34654b4f67b2798e14d6f6f938 AS prod
+FROM node:22.13.1-bookworm-slim@sha256:83fdfa2a4de32d7f8d79829ea259bd6a4821f8b2d123204ac467fbe3966450fc AS prod
 
 WORKDIR /build
 
