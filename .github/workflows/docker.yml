@@ -61,7 +61,7 @@ jobs:
             name=ghcr.io/${{ github.repository_owner }}/${{ matrix.image }}-${{ matrix.target }}
 
       - name: Build and push image
-        uses: docker/build-push-action@v6.14.0
+        uses: docker/build-push-action@v6.15.0
         with:
           context: ${{ matrix.context }}
           target: ${{ matrix.target }}
