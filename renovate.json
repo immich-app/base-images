@@ -1,23 +1,5 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "config:recommended",
-    "docker:pinDigests"
-  ],
-  "packageRules": [
-    {
-      "matchDatasources": [
-        "docker"
-      ],
-      "matchPackageNames": [
-        "node"
-      ],
-      "versionCompatibility": "^(?<version>[^-]+)(?<compatibility>-.*)?$",
-      "versioning": "node"
-    },
-    {
-      "matchManagers": ["github-actions"],
-      "automerge": true
-    }
-  ]
+  "extends": ["local>immich-app/.github:renovate-config"],
+  "schedule": "on tuesday"
 }
