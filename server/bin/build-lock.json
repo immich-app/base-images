@@ -7,8 +7,8 @@
     },
     {
       "name": "libheif",
-      "version": "1.19.3",
-      "revision": "65b0e04ee7e3abebcc55bf2f77d7083823c2d07a"
+      "version": "1.19.7",
+      "revision": "c22636155fc6848b71ad77971159e6e1cc349cce"
     },
     {
       "name": "libjxl",
