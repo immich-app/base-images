@@ -17,8 +17,8 @@
     },
     {
       "name": "libraw",
-      "version": "0.21.3",
-      "revision": "261c18ca0f1f9b83a53947b77751050d90d18e67"
+      "version": "0.22.0-SNAPSHOT",
+      "revision": "09bea31181b43e97959ee5452d91e5bc66365f1f"
     },
     {
       "name": "libvips",
