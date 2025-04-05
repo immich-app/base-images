@@ -2,8 +2,8 @@
   "sources": [
     {
       "name": "imagemagick",
-      "version": "7.1.1-40",
-      "revision": "ed93f7fe0313ae51b10517f6f980127dccd907d5"
+      "version": "7.1.1-47",
+      "revision": "82572afc879b439cbf8c9c6f3a9ac7626adf98fb"
     },
     {
       "name": "libheif",
