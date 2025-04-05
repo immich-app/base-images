@@ -22,8 +22,8 @@
     },
     {
       "name": "libvips",
-      "version": "8.15.3",
-      "revision": "1a86d4e153536e035d1907652391a26f77cbe1b8"
+      "version": "8.16.1",
+      "revision": "82c7c05cb02a52750251bb4cc69d67f40568cf98"
     }
   ],
   "packages": [
