@@ -2,7 +2,7 @@
 
 set -e
 
-: "${LIBHEIF_REVISION:=$(jq -cr '.sources[] | select(.name == "libheif").revision' build-lock.json)}"
+: "${LIBHEIF_REVISION:=$(jq -cr '.revision' libheif.json)}"
 
 git clone https://github.com/strukturag/libheif.git
 cd libheif

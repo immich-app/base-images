@@ -14,14 +14,14 @@ while [[ "$#" -gt 0 ]]; do
     shift
 done
 
-: "${LIBJXL_REVISION:=$(jq -cr '.sources[] | select(.name == "libjxl").revision' build-lock.json)}"
+: "${LIBJXL_REVISION:=$(jq -cr '.revision' libjxl.json)}"
 
 git clone https://github.com/libjxl/libjxl.git
 cd libjxl
 git reset --hard "$LIBJXL_REVISION"
 git submodule update --init --recursive --depth 1 --recommend-shallow
-git apply ../jpegli-empty-dht-marker.patch # adapted from https://github.com/libjxl/libjxl/pull/2704
-git apply ../jpegli-icc-warning.patch
+git apply ../libjxl-patches/jpegli-empty-dht-marker.patch # adapted from https://github.com/libjxl/libjxl/pull/2704
+git apply ../libjxl-patches/jpegli-icc-warning.patch
 
 mkdir build
 cd build

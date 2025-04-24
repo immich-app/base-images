@@ -1,0 +1,8 @@
+{
+    "name": "ffmpeg",
+    "version": "7.0.2-9",
+    "sha256": {
+        "amd64": "cd52577405c24f126284f1959288adefe30f8880a9ac6f3125c6eb4b5228ac59",
+        "arm64": "ce38aaa417f8285126e1a8c3e5e4b284a40e9ba903defde1df2eaf9ea53fe704"
+    }
+}
