@@ -19,7 +19,8 @@ RUN apt-get update && \
     apt-get autoremove -y && \
     apt-get clean -y && \
     rm -rf /var/lib/apt/lists/*
-USER postgres
+# cnpg uid is 26 while existing docker compose deployments use 999
+USER 999:999
 
 COPY postgresql.conf /etc/postgresql/postgresql.conf
 
