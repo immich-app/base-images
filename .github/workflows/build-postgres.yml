@@ -77,12 +77,6 @@ jobs:
             if (context.eventName == "workflow_dispatch") return true;
             return "${{ steps.changed-version.outputs.any_changed }}" == "true";
 
-      - name: Set major postgres version
-        id: version
-        run: |
-          pg_major=$(echo ${{ matrix.pg }} | cut -d'.' -f1)
-          echo "pg_major=$pg_major" >> "$GITHUB_OUTPUT"
-
       - name: Generate docker image tags
         id: metadata
         uses: docker/metadata-action@v5
@@ -94,9 +88,7 @@ jobs:
             name=ghcr.io/${{ github.repository_owner }}/postgres
           tags: |
             type=raw,value=${{ matrix.pg }}-${{ matrix.vectorchord }}
-            type=raw,value=${{ steps.version.outputs.pg_major }}-${{ matrix.vectorchord }}
             type=raw,value=${{ matrix.pg }}
-            type=raw,value=${{ steps.version.outputs.pg_major }}
 
       - name: Build and push image
         uses: docker/build-push-action@v6.16.0
