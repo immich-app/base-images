@@ -104,6 +104,7 @@ jobs:
             PG_MAJOR=${{ matrix.pg }}
             VECTORCHORD_TAG=${{ matrix.vectorchord }}
             PGVECTORS_TAG=${{ matrix.pgvectors }}
+            PGVECTOR_TAG=${{ matrix.pgvector }}
 
   results:
       if: ${{ always() }}
