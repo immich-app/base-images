@@ -1,8 +1,9 @@
-ARG CNPG_TAG
+ARG PG_MAJOR
+ARG PGVECTOR_TAG=0.8.0
 
-FROM ghcr.io/cloudnative-pg/postgresql:$CNPG_TAG-bookworm
+FROM pgvector/pgvector:${PGVECTOR_TAG}-pg${PG_MAJOR}
 
-ARG CNPG_TAG
+ARG PG_MAJOR
 ARG VECTORCHORD_TAG
 ARG PGVECTORS_TAG
 ARG TARGETARCH
@@ -11,16 +12,15 @@ ARG TARGETARCH
 USER root
 RUN apt-get update && \
     apt-get install -y wget && \
-    wget -O /tmp/vchord.deb https://github.com/tensorchord/VectorChord/releases/download/$VECTORCHORD_TAG/postgresql-${CNPG_TAG%.*}-vchord_${VECTORCHORD_TAG#"v"}-1_${TARGETARCH}.deb && \
-    wget -O /tmp/pgvectors.deb https://github.com/tensorchord/pgvecto.rs/releases/download/v$PGVECTORS_TAG/vectors-pg${CNPG_TAG%.*}_${PGVECTORS_TAG#"v"}_${TARGETARCH}_vectors.deb && \
+    wget -O /tmp/vchord.deb https://github.com/tensorchord/VectorChord/releases/download/$VECTORCHORD_TAG/postgresql-${PG_MAJOR%.*}-vchord_${VECTORCHORD_TAG#"v"}-1_${TARGETARCH}.deb && \
+    wget -O /tmp/pgvectors.deb https://github.com/tensorchord/pgvecto.rs/releases/download/v$PGVECTORS_TAG/vectors-pg${PG_MAJOR%.*}_${PGVECTORS_TAG#"v"}_${TARGETARCH}_vectors.deb && \
     apt-get install -y /tmp/vchord.deb /tmp/pgvectors.deb && \
     rm -f /tmp/vchord.deb /tmp/pgvectors.deb && \
     apt-get remove -y wget && \
     apt-get autoremove -y && \
     apt-get clean -y && \
     rm -rf /var/lib/apt/lists/*
-# cnpg uid is 26 while existing docker compose deployments use 999
-USER 999:999
+USER postgres
 
 COPY postgresql.conf /etc/postgresql/postgresql.conf
 

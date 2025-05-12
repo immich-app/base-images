@@ -80,7 +80,7 @@ jobs:
       - name: Set major postgres version
         id: version
         run: |
-          pg_major=$(echo ${{ matrix.cnpg }} | cut -d'.' -f1)
+          pg_major=$(echo ${{ matrix.pg }} | cut -d'.' -f1)
           echo "pg_major=$pg_major" >> "$GITHUB_OUTPUT"
 
       - name: Generate docker image tags
@@ -93,9 +93,9 @@ jobs:
           images: |
             name=ghcr.io/${{ github.repository_owner }}/postgres
           tags: |
-            type=raw,value=${{ matrix.cnpg }}-${{ matrix.vectorchord }}
+            type=raw,value=${{ matrix.pg }}-${{ matrix.vectorchord }}
             type=raw,value=${{ steps.version.outputs.pg_major }}-${{ matrix.vectorchord }}
-            type=raw,value=${{ matrix.cnpg }}
+            type=raw,value=${{ matrix.pg }}
             type=raw,value=${{ steps.version.outputs.pg_major }}
 
       - name: Build and push image
@@ -109,7 +109,7 @@ jobs:
           tags: ${{ steps.metadata.outputs.tags }}
           labels: ${{ steps.metadata.outputs.labels }}
           build-args: |
-            CNPG_TAG=${{ matrix.cnpg }}
+            PG_MAJOR=${{ matrix.pg }}
             VECTORCHORD_TAG=${{ matrix.vectorchord }}
             PGVECTORS_TAG=${{ matrix.pgvectors }}
 
