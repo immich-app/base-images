@@ -13,9 +13,13 @@ USER root
 RUN apt-get update && \
     apt-get install -y wget && \
     wget -O /tmp/vchord.deb https://github.com/tensorchord/VectorChord/releases/download/$VECTORCHORD_TAG/postgresql-${PG_MAJOR%.*}-vchord_${VECTORCHORD_TAG#"v"}-1_${TARGETARCH}.deb && \
-    wget -O /tmp/pgvectors.deb https://github.com/tensorchord/pgvecto.rs/releases/download/v$PGVECTORS_TAG/vectors-pg${PG_MAJOR%.*}_${PGVECTORS_TAG#"v"}_${TARGETARCH}_vectors.deb && \
-    apt-get install -y /tmp/vchord.deb /tmp/pgvectors.deb && \
-    rm -f /tmp/vchord.deb /tmp/pgvectors.deb && \
+    if [ -n "$PGVECTORS_TAG" ]; then \
+        wget -O /tmp/pgvectors.deb https://github.com/tensorchord/pgvecto.rs/releases/download/v$PGVECTORS_TAG/vectors-pg${PG_MAJOR%.*}_${PGVECTORS_TAG#"v"}_${TARGETARCH}$(if [ "$PGVECTORS_TAG" = '0.3.0'; echo "_vectors"; fi ]).deb; \
+        apt-get install -y /tmp/pgvectors.deb; \
+        rm -f /tmp/pgvectors.deb; \
+    fi && \
+    apt-get install -y /tmp/vchord.deb && \
+    rm -f /tmp/vchord.deb && \
     apt-get remove -y wget && \
     apt-get autoremove -y && \
     apt-get clean -y && \

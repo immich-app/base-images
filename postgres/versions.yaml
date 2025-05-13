@@ -9,4 +9,12 @@ vectorchord:
 pgvector:
   - "0.8.0"
 pgvectors:
+  - "0.2.0"
+  - "0.2.1"
   - "0.3.0"
+  - ""
+exclude:
+  - pgvectors: "0.2.0"
+    pg: "17"
+  - pgvectors: "0.2.1"
+    pg: "17"

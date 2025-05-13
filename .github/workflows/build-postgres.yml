@@ -87,7 +87,8 @@ jobs:
           images: |
             name=ghcr.io/${{ github.repository_owner }}/postgres
           tags: |
-            type=raw,value=${{ matrix.pg }}-${{ matrix.vectorchord }}
+            type=raw,value=${{ matrix.pg }}-vectorchord${{ matrix.vectorchord }}-pgvectors${{ matrix.pgvectors }},enable=${{ matrix.pgvectors != '' }}
+            type=raw,value=${{ matrix.pg }}-vectorchord${{ matrix.vectorchord }}
             type=raw,value=${{ matrix.pg }}
 
       - name: Build and push image
