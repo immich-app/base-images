@@ -16,7 +16,7 @@ permissions:
 
 jobs:
   build_and_push:
-    uses: immich-app/immich/.github/workflows/multi-runner-build.yml@41a127e2ab8d5c3bd130eeb8e342a8668582fe0b
+    uses: immich-app/devtools/.github/workflows/multi-runner-build.yml@a6c9d08f2c3a5d7773ecc209cdde4b910d70cdb3
     strategy:
       fail-fast: true
       matrix:
