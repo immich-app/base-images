@@ -89,7 +89,7 @@ jobs:
           tags: |
             type=raw,value=${{ matrix.pg }}-vectorchord${{ matrix.vectorchord }}-pgvectors${{ matrix.pgvectors }},enable=${{ matrix.pgvectors != '' }}
             type=raw,value=${{ matrix.pg }}-vectorchord${{ matrix.vectorchord }},enable=${{ matrix.pgvectors == '' }}
-            type=raw,value=${{ matrix.pg }}
+            type=raw,value=${{ matrix.pg }},enable=${{ matrix.pgvectors == '' }}
 
       - name: Build and push image
         uses: docker/build-push-action@v6.16.0
