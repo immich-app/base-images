@@ -9,12 +9,11 @@ ARG PGVECTORS_TAG
 ARG TARGETARCH
 
 # drop to root to install packages
-USER root
 RUN apt-get update && \
     apt-get install -y wget && \
-    wget -O /tmp/vchord.deb https://github.com/tensorchord/VectorChord/releases/download/$VECTORCHORD_TAG/postgresql-${PG_MAJOR%.*}-vchord_${VECTORCHORD_TAG#"v"}-1_${TARGETARCH}.deb && \
+    wget -nv -O /tmp/vchord.deb https://github.com/tensorchord/VectorChord/releases/download/$VECTORCHORD_TAG/postgresql-${PG_MAJOR%.*}-vchord_${VECTORCHORD_TAG#"v"}-1_${TARGETARCH}.deb && \
     if [ -n "$PGVECTORS_TAG" ]; then \
-        wget -O /tmp/pgvectors.deb https://github.com/tensorchord/pgvecto.rs/releases/download/v$PGVECTORS_TAG/vectors-pg${PG_MAJOR%.*}_${PGVECTORS_TAG#"v"}_${TARGETARCH}$(if [ "$PGVECTORS_TAG" = '0.3.0']; then echo "_vectors"; fi).deb; \
+        wget -nv -O /tmp/pgvectors.deb https://github.com/tensorchord/pgvecto.rs/releases/download/v$PGVECTORS_TAG/vectors-pg${PG_MAJOR%.*}_${PGVECTORS_TAG#"v"}_${TARGETARCH}$(if [ "$PGVECTORS_TAG" = '0.3.0']; then echo "_vectors"; fi).deb; \
         apt-get install -y /tmp/pgvectors.deb; \
         rm -f /tmp/pgvectors.deb; \
     fi && \
@@ -24,7 +23,6 @@ RUN apt-get update && \
     apt-get autoremove -y && \
     apt-get clean -y && \
     rm -rf /var/lib/apt/lists/*
-USER postgres
 
 COPY postgresql.hdd.conf postgresql.ssd.conf /etc/postgresql/
 
