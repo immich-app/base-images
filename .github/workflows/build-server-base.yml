@@ -39,6 +39,7 @@ jobs:
         run: echo "should_force=${{ steps.found_paths.outputs.workflow == 'true' || github.event_name == 'release' || github.ref_name == 'main' }}" >> "$GITHUB_OUTPUT"
   
   build_and_push:
+    needs: pre-job
     uses: immich-app/devtools/.github/workflows/multi-runner-build.yml@a6c9d08f2c3a5d7773ecc209cdde4b910d70cdb3
     if: ${{ needs.pre-job.outputs.should_run == 'true' }}
     strategy:
@@ -55,7 +56,7 @@ jobs:
       dockerfile: server/Dockerfile
 
   success-check:
-    needs: [build_and_push]
+    needs: build_and_push
     permissions: {}
     runs-on: ubuntu-latest
     if: always()
