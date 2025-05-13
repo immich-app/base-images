@@ -55,6 +55,7 @@ jobs:
       image: base-server-${{ matrix.target }}
       context: server
       dockerfile: server/Dockerfile
+      tag-suffix: cachebust
 
   success-check:
     needs: build_and_push
