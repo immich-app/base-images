@@ -29,10 +29,8 @@ USER postgres
 COPY postgresql.hdd.conf postgresql.ssd.conf /etc/postgresql/
 
 RUN if [ -n "$PGVECTORS_TAG" ]; then \
-        sed -i "s/vchord.so/vchord.so, vectors.so/" /etc/postgresql/postgresql.hdd.conf; \
-        sed -i "s/vchord.so/vchord.so, vectors.so/" /etc/postgresql/postgresql.ssd.conf; \
-        sed -i "s/, public/, public, vectors/" /etc/postgresql/postgresql.hdd.conf; \
-        sed -i "s/, public/, public, vectors/" /etc/postgresql/postgresql.ssd.conf; \
+        sed -i "s/vchord.so/vchord.so, vectors.so/" /etc/postgresql/postgresql.*.conf; \
+        sed -i "s/, public/, public, vectors/" /etc/postgresql/postgresql.*.conf; \
     fi
 
 HEALTHCHECK --interval=5m --start-interval=30s --start-period=5m CMD pg_isready --dbname="$${POSTGRES_DB}" --username="$${POSTGRES_USER}" || exit 1; Chksum="$$(psql --dbname="$${POSTGRES_DB}" --username="$${POSTGRES_USER}" --tuples-only --no-align --command='SELECT COALESCE(SUM(checksum_failures), 0) FROM pg_stat_database')"; echo "checksum failure count is $$Chksum"; [ "$$Chksum" = '0' ] || exit 1
