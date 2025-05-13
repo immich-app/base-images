@@ -44,6 +44,7 @@ jobs:
     if: ${{ needs.pre-job.outputs.should_run == 'true' }}
     strategy:
       fail-fast: true
+      max-parallel: 1
       matrix:
         target: ["dev", "prod"]
     permissions:
