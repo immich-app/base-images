@@ -112,10 +112,10 @@ jobs:
             name=ghcr.io/${{ github.repository_owner }}/postgres
           tags: |
             type=raw,value=${{ matrix.pg }}-vectorchord${{ matrix.vectorchord }}-pgvector${{ matrix.pgvector }}-pgvectors${{ matrix.pgvectors }},enable=${{ matrix.pgvectors != '' }}
-            type=raw,value=${{ matrix.pg }}-vectorchord${{ matrix.vectorchord }}-pgvectors${{ matrix.pgvectors }},enable=${{matrix.pgvectors != '' && matrix.pgvector == steps.latest-pgvector.outputs.result }}
+            type=raw,value=${{ matrix.pg }}-vectorchord${{ matrix.vectorchord }}-pgvectors${{ matrix.pgvectors }},enable=${{matrix.pgvectors != '' && matrix.pgvector == fromJson(steps.latest-pgvector.outputs.result) }}
             type=raw,value=${{ matrix.pg }}-vectorchord${{ matrix.vectorchord }}-pgvector${{ matrix.pgvector }},enable=${{ matrix.pgvectors == '' }}
-            type=raw,value=${{ matrix.pg }}-vectorchord${{ matrix.vectorchord }},enable=${{ matrix.pgvectors == '' && matrix.pgvector == steps.latest-pgvector.outputs.result }}
-            type=raw,value=${{ matrix.pg }},enable=${{ matrix.pgvectors == '' && matrix.vectorchord == steps.latest-vchord.outputs.result && matrix.pgvector == steps.latest-pgvector.outputs.result }}
+            type=raw,value=${{ matrix.pg }}-vectorchord${{ matrix.vectorchord }},enable=${{ matrix.pgvectors == '' && matrix.pgvector == fromJson(steps.latest-pgvector.outputs.result) }}
+            type=raw,value=${{ matrix.pg }},enable=${{ matrix.pgvectors == '' && matrix.vectorchord == fromJson(steps.latest-vchord.outputs.result) && matrix.pgvector == fromJson(steps.latest-pgvector.outputs.result) }}
 
       - name: Build and push image
         uses: docker/build-push-action@v6.16.0
