@@ -6,7 +6,6 @@ on:
       - "*"
     branches: [main]
   pull_request:
-    branches: [main]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -16,56 +15,56 @@ permissions:
   packages: write
 
 jobs:
+  pre-job:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      should_run: ${{ steps.found_paths.outputs.server == 'true' ||  steps.should_force.outputs.should_force == 'true' }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - id: found_paths
+        uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # v3.0.2
+        with:
+          filters: |
+            server:
+              - 'server/**'
+            workflow:
+              - '.github/workflows/build-server-base.yml'
+      - name: Check if we should force jobs to run
+        id: should_force
+        run: echo "should_force=${{ steps.found_paths.outputs.workflow == 'true' || github.event_name == 'release' || github.ref_name == 'main' }}" >> "$GITHUB_OUTPUT"
+  
   build_and_push:
-    runs-on: mich
+    needs: pre-job
+    uses: immich-app/devtools/.github/workflows/multi-runner-build.yml@a6c9d08f2c3a5d7773ecc209cdde4b910d70cdb3
+    if: ${{ needs.pre-job.outputs.should_run == 'true' }}
     strategy:
-      max-parallel: 1
       fail-fast: true
       matrix:
         target: ["dev", "prod"]
-        include:
-          - context: "server"
-            image: "base-server"
-            platforms: "linux/amd64,linux/arm64"
+    permissions:
+      contents: read
+      actions: read
+      packages: write
+    with:
+      image: base-server-${{ matrix.target }}
+      context: server
+      dockerfile: server/Dockerfile
 
+  success-check:
+    needs: build_and_push
+    permissions: {}
+    runs-on: ubuntu-latest
+    if: always()
     steps:
-      - name: Checkout
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@29109295f81e9208d7d86ff1c6c12d2833863392 # v3.6.0
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@b5ca514318bd6ebac0fb2aedd5d36ec1b5c232a2 # v3.10.0
-
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3
-        # Skip when PR from a fork
-        if: ${{ !github.event.pull_request.head.repo.fork }}
-        with:
-          registry: ghcr.io
-          username: ${{ github.repository_owner }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Generate docker image tags
-        id: metadata
-        uses: docker/metadata-action@902fa8ec7d6ecbf8d84d538b9b233a880e428804 # v5
-        with:
-          flavor: |
-            # Disable latest tag
-            latest=false
-          images: |
-            name=ghcr.io/${{ github.repository_owner }}/${{ matrix.image }}-${{ matrix.target }}
-
-      - name: Build and push image
-        uses: docker/build-push-action@14487ce63c7a62a4a324b0bfb37086795e31c6c1 # v6.16.0
-        with:
-          context: ${{ matrix.context }}
-          target: ${{ matrix.target }}
-          platforms: ${{ matrix.platforms }}
-          # Skip pushing when PR from a fork
-          push: ${{ !github.event.pull_request.head.repo.fork }}
-          tags: ${{ steps.metadata.outputs.tags }}
-          labels: ${{ steps.metadata.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+      - name: Any jobs failed?
+        if: ${{ contains(needs.*.result, 'failure') }}
+        run: exit 1
+      - name: All jobs passed or skipped
+        if: ${{ !(contains(needs.*.result, 'failure')) }}
+        # zizmor: ignore[template-injection]
+        run: echo "All jobs passed or skipped" && echo "${{ toJSON(needs.*.result) }}"
