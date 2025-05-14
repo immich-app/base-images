@@ -8,7 +8,6 @@ ARG VECTORCHORD_TAG
 ARG PGVECTORS_TAG
 ARG TARGETARCH
 
-# drop to root to install packages
 RUN apt-get update && \
     apt-get install -y wget && \
     wget -nv -O /tmp/vchord.deb https://github.com/tensorchord/VectorChord/releases/download/$VECTORCHORD_TAG/postgresql-${PG_MAJOR%.*}-vchord_${VECTORCHORD_TAG#"v"}-1_${TARGETARCH}.deb && \
