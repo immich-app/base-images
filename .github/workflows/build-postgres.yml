@@ -85,7 +85,9 @@ jobs:
         with:
           script: |
             const versions = JSON.parse(process.env.VERSION_MATRIX).vectorchord;
-            return versions.sort()[versions.length - 1];
+            const latest = versions.sort()[versions.length - 1];
+            console.log(`Latest VectorChord version: ${latest}`);
+            return latest;
 
       - name: Determine latest version of pgvector in matrix
         uses: actions/github-script@v7
@@ -95,7 +97,9 @@ jobs:
         with:
           script: |
             const versions = JSON.parse(process.env.VERSION_MATRIX).pgvector;
-            return versions.sort()[versions.length - 1];
+            const latest = versions.sort()[versions.length - 1];
+            console.log(`Latest pgvector version: ${latest}`);
+            return latest;
 
       - name: Generate docker image tags
         id: metadata
