@@ -77,6 +77,16 @@ jobs:
             if (context.eventName == "workflow_dispatch") return true;
             return "${{ steps.changed-version.outputs.any_changed }}" == "true";
 
+      - name: Determine latest version of VectorChord in matrix
+        uses: actions/github-script@v7
+        id: latest-vchord
+        env:
+          VCHORD_VERSIONS: ${{ needs.configure.outputs.matrix }}
+        with:
+          script: |
+            const versions = JSON.parse(process.env.VCHORD_VERSIONS).vectorchord;
+            return versions.sort()[versions.length - 1];
+
       - name: Generate docker image tags
         id: metadata
         uses: docker/metadata-action@v5
@@ -89,7 +99,7 @@ jobs:
           tags: |
             type=raw,value=${{ matrix.pg }}-vectorchord${{ matrix.vectorchord }}-pgvectors${{ matrix.pgvectors }},enable=${{ matrix.pgvectors != '' }}
             type=raw,value=${{ matrix.pg }}-vectorchord${{ matrix.vectorchord }},enable=${{ matrix.pgvectors == '' }}
-            type=raw,value=${{ matrix.pg }},enable=${{ matrix.pgvectors == '' }}
+            type=raw,value=${{ matrix.pg }},enable=${{ matrix.vectorchord == steps.latest-vchord.outputs.result && matrix.pgvectors == '' }}
 
       - name: Build and push image
         uses: docker/build-push-action@v6.16.0
