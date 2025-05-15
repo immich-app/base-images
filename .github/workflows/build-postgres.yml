@@ -1,0 +1,148 @@
+name: Build and Push Postgres Images
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  packages: write
+
+jobs:
+  configure:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.get-versions.outputs.result }}
+    steps:
+     - name: Checkout to repository
+       uses: actions/checkout@v4
+     - name: Get dependency versions
+       uses: mikefarah/yq@v4.45.2
+       id: get-versions
+       with:
+        cmd: yq eval -o=json -I=0 postgres/versions.yaml
+
+  build_and_push:
+    runs-on: ubuntu-latest
+    needs: configure
+    strategy:
+      # Prevent a failure in one image from stopping the other builds
+      fail-fast: false
+      matrix: ${{ fromJson(needs.configure.outputs.matrix) }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3.6.0
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3.10.0
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3.4.0
+        if: ${{ !github.event.pull_request.head.repo.fork }}
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Determine version change
+        id: changed-version
+        env:
+          BASE: ${{ github.event_name == 'pull_request' && format('origin/{0}', github.base_ref) || 'HEAD~1' }}
+        run: |
+          CHANGED_FILES=$(git diff --name-only $BASE...HEAD)
+          echo $CHANGED_FILES
+          if echo "$CHANGED_FILES" | grep -q -e "^postgres/" -e "^.github/workflows/build-postgres.yml$"; then
+            echo "any_changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "any_changed=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Determine image push
+        uses: actions/github-script@v7
+        id: should-release
+        with:
+          script: |
+            if (context.eventName == "pull_request") return false;
+            if (context.eventName == "workflow_dispatch") return true;
+            return "${{ steps.changed-version.outputs.any_changed }}" == "true";
+
+      - name: Determine latest version of VectorChord in matrix
+        uses: actions/github-script@v7
+        id: latest-vchord
+        env:
+          VERSION_MATRIX: ${{ needs.configure.outputs.matrix }}
+        with:
+          script: |
+            const versions = JSON.parse(process.env.VERSION_MATRIX).vectorchord;
+            const latest = versions.sort()[versions.length - 1];
+            console.log(`Latest VectorChord version: ${latest}`);
+            return latest;
+
+      - name: Determine latest version of pgvector in matrix
+        uses: actions/github-script@v7
+        id: latest-pgvector
+        env:
+          VERSION_MATRIX: ${{ needs.configure.outputs.matrix }}
+        with:
+          script: |
+            const versions = JSON.parse(process.env.VERSION_MATRIX).pgvector;
+            const latest = versions.sort()[versions.length - 1];
+            console.log(`Latest pgvector version: ${latest}`);
+            return latest;
+
+      - name: Generate docker image tags
+        id: metadata
+        uses: docker/metadata-action@v5
+        with:
+          flavor: |
+            # Disable latest tag
+            latest=false
+          images: |
+            name=ghcr.io/${{ github.repository_owner }}/postgres
+          tags: |
+            type=raw,value=${{ matrix.pg }}-vectorchord${{ matrix.vectorchord }}-pgvector${{ matrix.pgvector }}-pgvectors${{ matrix.pgvectors }},enable=${{ matrix.pgvectors != '' }}
+            type=raw,value=${{ matrix.pg }}-vectorchord${{ matrix.vectorchord }}-pgvectors${{ matrix.pgvectors }},enable=${{matrix.pgvectors != '' && matrix.pgvector == fromJson(steps.latest-pgvector.outputs.result) }}
+            type=raw,value=${{ matrix.pg }}-vectorchord${{ matrix.vectorchord }}-pgvector${{ matrix.pgvector }},enable=${{ matrix.pgvectors == '' }}
+            type=raw,value=${{ matrix.pg }}-vectorchord${{ matrix.vectorchord }},enable=${{ matrix.pgvectors == '' && matrix.pgvector == fromJson(steps.latest-pgvector.outputs.result) }}
+            type=raw,value=${{ matrix.pg }},enable=${{ matrix.pgvectors == '' && matrix.vectorchord == fromJson(steps.latest-vchord.outputs.result) && matrix.pgvector == fromJson(steps.latest-pgvector.outputs.result) }}
+
+      - name: Build and push image
+        uses: docker/build-push-action@v6.16.0
+        with:
+          context: postgres/
+          platforms: linux/amd64,linux/arm64
+          push: ${{ steps.should-release.outputs.result }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          tags: ${{ steps.metadata.outputs.tags }}
+          labels: ${{ steps.metadata.outputs.labels }}
+          build-args: |
+            PG_MAJOR=${{ matrix.pg }}
+            VECTORCHORD_TAG=${{ matrix.vectorchord }}
+            PGVECTORS_TAG=${{ matrix.pgvectors }}
+            PGVECTOR_TAG=${{ matrix.pgvector }}
+
+  results:
+      if: ${{ always() }}
+      runs-on: ubuntu-latest
+      name: Postgres build success
+      needs: [build_and_push]
+      steps:
+        - run: |
+            result="${{ needs.build_and_push.result }}"
+            if [[ $result == "success" || $result == "skipped" ]]; then
+              exit 0
+            else
+              exit 1
+            fi
