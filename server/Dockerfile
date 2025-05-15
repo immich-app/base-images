@@ -76,18 +76,17 @@ RUN ./libraw.sh
 
 FROM libraw AS imagemagick
 
-COPY --from=libheif /usr/local/lib/*libheif* /usr/local/lib/
-COPY --from=libheif /usr/local/lib/pkgconfig/*libheif* /usr/local/lib/pkgconfig/
+COPY --from=libheif /usr/local/lib/ /usr/local/lib/libheif/
 COPY --from=libheif /usr/local/include/libheif/ /usr/local/include/libheif/
 
-COPY --from=libjxl /usr/local/lib/*libjxl* /usr/local/lib/
-COPY --from=libjxl /usr/local/lib/pkgconfig/*libjxl* /usr/local/lib/pkgconfig/
+COPY --from=libjxl /usr/local/lib/ /usr/local/lib/libjxl/
 COPY --from=libjxl /usr/local/include/jxl/ /usr/local/include/jxl/
 COPY --from=libjxl /usr/local/include/jconfig.h /usr/local/include/jmorecfg.h /usr/local/include/jpeglib.h /usr/local/include/
 
-COPY --from=libraw /usr/local/lib/*libraw* /usr/local/lib/
-COPY --from=libraw /usr/local/lib/pkgconfig/*libraw* /usr/local/lib/pkgconfig/
-COPY --from=libraw /usr/local/include/libraw/ /usr/local/include/libraw/
+# COPY resolves symlinks unless copying the enclosing folder, so this is a workaround to get the correct result
+RUN cp -r /usr/local/lib/libheif/libheif* /usr/local/lib/libjxl/libjxl* /usr/local/lib/libjxl/libjpeg* /usr/local/lib && \
+    mv /usr/local/lib/libheif/pkgconfig/* /usr/local/lib/libjxl/pkgconfig/* /usr/local/lib/pkgconfig && \
+    rm -r /usr/local/lib/libheif /usr/local/lib/libjxl
 
 COPY sources/imagemagick.json sources/imagemagick.sh ./
 RUN ./imagemagick.sh
@@ -100,9 +99,9 @@ RUN ./libvips.sh
 FROM base AS dev
 
 COPY --from=ffmpeg /usr/lib/jellyfin-ffmpeg /usr/lib/jellyfin-ffmpeg
-COPY --from=libheif /usr/local/lib/*libheif* /usr/local/lib/
-COPY --from=libjxl /usr/local/lib/*libjxl* /usr/local/lib/*libjpeg* /usr/local/lib/
-COPY --from=libvips /usr/local/lib/*vips* /usr/local/lib/*Magick* /usr/local/lib/*libraw* /usr/local/lib/
+COPY --from=libvips /usr/local/lib/ /usr/local/lib/
+COPY --from=libvips /usr/local/bin/vips* /usr/local/bin/vips*
+COPY --from=libvips /usr/local/include/vips/ /usr/local/include/vips/
 COPY --from=geodata /build/geodata /build/geodata
 
 COPY packages/ ./packages/
