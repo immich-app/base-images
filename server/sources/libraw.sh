@@ -2,7 +2,7 @@
 
 set -e
 
-: "${LIBRAW_REVISION:=$(jq -cr '.sources[] | select(.name == "libraw").revision' build-lock.json)}"
+: "${LIBRAW_REVISION:=$(jq -cr '.revision' libraw.json)}"
 
 git clone https://github.com/libraw/libraw.git
 cd libraw

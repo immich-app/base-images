@@ -2,7 +2,7 @@
 
 set -e
 
-: "${IMAGEMAGICK_REVISION:=$(jq -cr '.sources[] | select(.name == "imagemagick").revision' build-lock.json)}"
+: "${IMAGEMAGICK_REVISION:=$(jq -cr '.revision' imagemagick.json)}"
 
 git clone https://github.com/ImageMagick/ImageMagick.git
 cd ImageMagick

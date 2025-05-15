@@ -2,7 +2,7 @@
 
 set -e
 
-: "${LIBVIPS_REVISION:=$(jq -cr '.sources[] | select(.name == "libvips").revision' build-lock.json)}"
+: "${LIBVIPS_REVISION:=$(jq -cr '.revision' libvips.json)}"
 
 git clone https://github.com/libvips/libvips.git
 cd libvips

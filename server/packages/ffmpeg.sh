@@ -2,11 +2,9 @@
 
 set -e
 
-LOCK=$(jq -c '.packages[] | select(.name == "ffmpeg")' build-lock.json)
 export TARGETARCH=${TARGETARCH:=$(dpkg --print-architecture)}
-FFMPEG_VERSION=${FFMPEG_VERSION:=$(echo "$LOCK" | jq -r '.version')}
-FFMPEG_SHA256=${FFMPEG_SHA256:=$(echo "$LOCK" | jq -r '.sha256[$ENV.TARGETARCH]')}
-
+: "${FFMPEG_VERSION:=$(jq -cr '.version' ffmpeg.json)}"
+: "${FFMPEG_SHA256:=$(jq -cr '.sha256[$ENV.TARGETARCH]' ffmpeg.json)}"
 echo "$FFMPEG_SHA256  jellyfin-ffmpeg7_${FFMPEG_VERSION}-bookworm_${TARGETARCH}.deb" > ffmpeg.sha256
 
 wget -nv https://github.com/jellyfin/jellyfin-ffmpeg/releases/download/v"${FFMPEG_VERSION}"/jellyfin-ffmpeg7_"${FFMPEG_VERSION}"-bookworm_"${TARGETARCH}".deb
