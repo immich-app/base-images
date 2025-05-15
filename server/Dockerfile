@@ -100,7 +100,7 @@ FROM base AS dev
 
 COPY --from=ffmpeg /usr/lib/jellyfin-ffmpeg /usr/lib/jellyfin-ffmpeg
 COPY --from=libvips /usr/local/lib/ /usr/local/lib/
-COPY --from=libvips /usr/local/bin/vips* /usr/local/bin/vips*
+COPY --from=libvips /usr/local/bin/vips* /usr/local/bin/
 COPY --from=libvips /usr/local/include/vips/ /usr/local/include/vips/
 COPY --from=geodata /build/geodata /build/geodata
 
