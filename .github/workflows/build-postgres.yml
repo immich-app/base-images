@@ -23,7 +23,7 @@ jobs:
         matrix: ${{ steps.get-versions.outputs.result }}
     steps:
         - name: Checkout to repository
-          uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+          uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
         - id: get-versions
           name: Get dependency versions
@@ -56,7 +56,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           fetch-depth: 0
 
@@ -88,7 +88,7 @@ jobs:
           fi
 
       - name: Determine image push
-        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
         id: should-release
         with:
           script: |
@@ -97,7 +97,7 @@ jobs:
             return "${{ steps.changed-version.outputs.any_changed }}" == "true";
 
       - name: Determine latest version of VectorChord in matrix
-        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
         id: latest-vchord
         env:
           VERSION_MATRIX: ${{ needs.pre-job.outputs.matrix }}
@@ -109,7 +109,7 @@ jobs:
             return latest;
 
       - name: Determine latest version of pgvector in matrix
-        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
         id: latest-pgvector
         env:
           VERSION_MATRIX: ${{ needs.pre-job.outputs.matrix }}
@@ -122,7 +122,7 @@ jobs:
 
       - name: Generate docker image tags
         id: metadata
-        uses: docker/metadata-action@902fa8ec7d6ecbf8d84d538b9b233a880e428804 # v5
+        uses: docker/metadata-action@902fa8ec7d6ecbf8d84d538b9b233a880e428804 # v5.7.0
         with:
           flavor: |
             # Disable latest tag
