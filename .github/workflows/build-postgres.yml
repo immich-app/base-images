@@ -14,26 +14,45 @@ permissions:
   packages: write
 
 jobs:
-  configure:
+  pre-job:
     runs-on: ubuntu-latest
+    permissions:
+        contents: read
     outputs:
-      matrix: ${{ steps.get-versions.outputs.result }}
+        should-run: ${{ steps.found-paths.outputs.postgres == 'true' || steps.should-force.outputs.should-force == 'true' }}
+        matrix: ${{ steps.get-versions.outputs.result }}
     steps:
-     - name: Checkout to repository
-       uses: actions/checkout@v4
-     - name: Get dependency versions
-       uses: mikefarah/yq@v4.45.2
-       id: get-versions
-       with:
-        cmd: yq eval -o=json -I=0 postgres/versions.yaml
+        - name: Checkout to repository
+          uses: actions/checkout@v4
+
+        - id: get-versions
+          name: Get dependency versions
+          uses: mikefarah/yq@v4.45.2
+          with:
+            cmd: yq eval -o=json -I=0 postgres/versions.yaml
+
+        - id: found-paths
+          name: Check if any paths were changed
+          uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # v3.0.2
+          with:
+            filters: |
+              postgres:
+                - 'postgres/**'
+              workflow:
+                - '.github/workflows/build-postgres.yml'
+
+        - name: Check if we should force jobs to run
+          id: should-force
+          run: echo "should-force=${{ steps.found-paths.outputs.workflow == 'true' || github.event_name == 'workflow_dispatch' || github.event_name == 'release' }}" >> "$GITHUB_OUTPUT"
 
   build_and_push:
     runs-on: ubuntu-latest
-    needs: configure
+    needs: pre-job
+    if: ${{ needs.pre-job.outputs.should-run == 'true' }}
     strategy:
       # Prevent a failure in one image from stopping the other builds
       fail-fast: false
-      matrix: ${{ fromJson(needs.configure.outputs.matrix) }}
+      matrix: ${{ fromJson(needs.pre-job.outputs.matrix) }}
 
     steps:
       - name: Checkout
@@ -81,7 +100,7 @@ jobs:
         uses: actions/github-script@v7
         id: latest-vchord
         env:
-          VERSION_MATRIX: ${{ needs.configure.outputs.matrix }}
+          VERSION_MATRIX: ${{ needs.pre-job.outputs.matrix }}
         with:
           script: |
             const versions = JSON.parse(process.env.VERSION_MATRIX).vectorchord;
@@ -93,7 +112,7 @@ jobs:
         uses: actions/github-script@v7
         id: latest-pgvector
         env:
-          VERSION_MATRIX: ${{ needs.configure.outputs.matrix }}
+          VERSION_MATRIX: ${{ needs.pre-job.outputs.matrix }}
         with:
           script: |
             const versions = JSON.parse(process.env.VERSION_MATRIX).pgvector;
