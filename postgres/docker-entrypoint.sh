@@ -6,9 +6,6 @@ case "${DB_STORAGE_TYPE^^}" in
   SSD|HDD)
     echo "Using ${DB_STORAGE_TYPE^^} storage"
     cp "/etc/postgresql/postgresql.${DB_STORAGE_TYPE,,}.conf" /etc/postgresql/postgresql.conf
-    mkdir -p /var/lib/postgresql/data
-    chown -R postgres:postgres /var/lib/postgresql/data
-    chmod 700 /var/lib/postgresql/data
     ;;
   *)
     echo "Error: DB_STORAGE_TYPE must be set to 'SSD' or 'HDD'" >&2
@@ -16,3 +13,8 @@ case "${DB_STORAGE_TYPE^^}" in
     ;;
 esac
 
+: "${POSTGRES_USER:=${DB_USERNAME}}"
+: "${POSTGRES_PASSWORD:=${DB_PASSWORD}}"
+: "${POSTGRES_DB:=${DB_DATABASE_NAME}}"
+
+export POSTGRES_USER POSTGRES_PASSWORD POSTGRES_DB
