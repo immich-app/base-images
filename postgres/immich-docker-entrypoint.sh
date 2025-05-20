@@ -18,3 +18,5 @@ esac
 : "${POSTGRES_DB:=${DB_DATABASE_NAME}}"
 
 export POSTGRES_USER POSTGRES_PASSWORD POSTGRES_DB
+
+exec /usr/local/bin/docker-entrypoint.sh "$@"
