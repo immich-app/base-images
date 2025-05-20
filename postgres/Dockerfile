@@ -8,6 +8,8 @@ ARG VECTORCHORD_TAG
 ARG PGVECTORS_TAG
 ARG TARGETARCH
 
+ENV DB_STORAGE_TYPE=SSD
+
 RUN apt-get update && \
     apt-get install -y wget && \
     wget -nv -O /tmp/vchord.deb https://github.com/tensorchord/VectorChord/releases/download/$VECTORCHORD_TAG/postgresql-${PG_MAJOR%.*}-vchord_${VECTORCHORD_TAG#"v"}-1_${TARGETARCH}.deb && \
@@ -24,6 +26,7 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 COPY postgresql.hdd.conf postgresql.ssd.conf /etc/postgresql/
+COPY docker-entrypoint.sh /usr/local/bin/
 
 RUN if [ -n "$PGVECTORS_TAG" ]; then \
         sed -i "s/vchord.so/vchord.so, vectors.so/" /etc/postgresql/postgresql.*.conf; \
@@ -32,4 +35,6 @@ RUN if [ -n "$PGVECTORS_TAG" ]; then \
 
 HEALTHCHECK --interval=5m --start-interval=30s --start-period=5m CMD pg_isready --dbname="${POSTGRES_DB}" --username="${POSTGRES_USER}" || exit 1; Chksum="$(psql --dbname="${POSTGRES_DB}" --username="${POSTGRES_USER}" --tuples-only --no-align --command='SELECT COALESCE(SUM(checksum_failures), 0) FROM pg_stat_database')"; echo "checksum failure count is $Chksum"; [ "$Chksum" = '0' ] || exit 1
 
-CMD ["postgres", "-c", "config_file=/etc/postgresql/postgresql.ssd.conf"]
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
+
+CMD ["postgres", "-c", "config_file=/etc/postgresql/postgresql.conf"]
