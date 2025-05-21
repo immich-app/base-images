@@ -27,7 +27,7 @@ jobs:
 
         - id: get-versions
           name: Get dependency versions
-          uses: mikefarah/yq@734e2cd25402f10f51351c4034625043f07e7b06 # v4.45.3
+          uses: mikefarah/yq@b534aa9ee5d38001fba3cd8fe254a037e4847b37 # v4.45.4
           with:
             cmd: yq eval -o=json -I=0 postgres/versions.yaml
 
@@ -137,7 +137,7 @@ jobs:
             type=raw,value=${{ matrix.pg }},enable=${{ matrix.pgvectors == '' && matrix.vectorchord == fromJson(steps.latest-vchord.outputs.result) && matrix.pgvector == fromJson(steps.latest-pgvector.outputs.result) }}
 
       - name: Build and push image
-        uses: docker/build-push-action@v6.16.0
+        uses: docker/build-push-action@1dc73863535b631f98b2378be8619f83b136f4a0 # v6.17.0
         with:
           context: postgres/
           platforms: linux/amd64,linux/arm64
