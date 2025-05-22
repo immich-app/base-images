@@ -25,6 +25,8 @@ RUN apt-get update && \
     apt-get clean -y && \
     rm -rf /var/lib/apt/lists/*
 
+RUN chmod 1777 /etc/postgresql
+
 COPY postgresql.hdd.conf postgresql.ssd.conf /etc/postgresql/
 COPY immich-docker-entrypoint.sh /usr/local/bin/
 
