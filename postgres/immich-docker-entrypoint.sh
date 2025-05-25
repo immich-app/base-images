@@ -6,7 +6,9 @@ case "${DB_STORAGE_TYPE^^}" in
   SSD|HDD)
     echo "Using ${DB_STORAGE_TYPE^^} storage"
     cp -n "/etc/postgresql/postgresql.${DB_STORAGE_TYPE,,}.conf" /etc/postgresql/postgresql.conf
-    chown postgres:postgres /etc/postgresql/postgresql.conf
+    if [ "$(id -u)" -eq 0 ]; then
+      chown postgres:postgres /etc/postgresql/postgresql.conf
+    fi
     sed -i "s@##PGDATA@$PGDATA@" /etc/postgresql/postgresql.conf; \
     ;;
   *)
