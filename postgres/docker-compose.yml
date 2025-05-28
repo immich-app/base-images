@@ -12,10 +12,16 @@ services:
         PGVECTORS_TAG: 0.3.0
     environment:
       POSTGRES_PASSWORD: "password"
-      POSTGRES_USERNAME: "username"
-      POSTGRES_DB: "database_name"
+      DB_USERNAME_FILE: /run/secrets/immich_db_user
+      DB_DATABASE_NAME: "database_name"
       POSTGRES_INITDB_ARGS: '--data-checksums'
       PGDATA: /var/lib/postgresql/data/pgdata
     volumes:
       - ./data:/var/lib/postgresql/data
     restart: always
+    secrets:
+      - immich_db_user
+
+secrets:
+  immich_db_user:
+    file: ./secrets/postgres_username.txt
