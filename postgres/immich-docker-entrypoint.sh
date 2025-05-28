@@ -16,10 +16,7 @@ case "${DB_STORAGE_TYPE^^}" in
     ;;
 esac
 
-: "${POSTGRES_USER:=${DB_USERNAME}}"
-: "${POSTGRES_PASSWORD:=${DB_PASSWORD}}"
-: "${POSTGRES_DB:=${DB_DATABASE_NAME}}"
-
-export POSTGRES_USER POSTGRES_PASSWORD POSTGRES_DB
+# shellcheck source=postgres/set-env.sh
+. /usr/local/bin/set-env.sh
 
 exec /usr/local/bin/docker-entrypoint.sh "$@"
