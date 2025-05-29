@@ -27,14 +27,14 @@ RUN apt-get update && \
 
 RUN chmod 1777 /etc/postgresql
 
-COPY postgresql.hdd.conf postgresql.ssd.conf /etc/postgresql/
+COPY postgresql.hdd.conf postgresql.ssd.conf /var/postgresql-conf-tpl/
 COPY immich-docker-entrypoint.sh healthcheck.sh set-env.sh /usr/local/bin/
 
 HEALTHCHECK --interval=5m --start-interval=5s --start-period=5m CMD /usr/local/bin/healthcheck.sh
 
 RUN if [ -n "$PGVECTORS_TAG" ]; then \
-        sed -i "s/vchord.so/vchord.so, vectors.so/" /etc/postgresql/postgresql.*.conf; \
-        sed -i "s/, public/, public, vectors/" /etc/postgresql/postgresql.*.conf; \
+        sed -i "s/vchord.so/vchord.so, vectors.so/" /var/postgresql-conf-tpl/postgresql.*.conf; \
+        sed -i "s/, public/, public, vectors/" /var/postgresql-conf-tpl/postgresql.*.conf; \
     fi
 
 ENTRYPOINT ["/usr/local/bin/immich-docker-entrypoint.sh"]
