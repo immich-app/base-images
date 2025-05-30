@@ -6,7 +6,7 @@ pg:
 vectorchord:
   # renovate: datasource=github-releases depName=tensorchord/VectorChord
   - "0.3.0"
-  - "0.4.1"
+  - "0.4.2"
 pgvector:
   - "0.8.0"
 pgvectors:
