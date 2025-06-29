@@ -43,8 +43,7 @@ RUN ./configure-apt.sh && \
         libwebp-dev \
         libio-compress-brotli-perl \
         libaom-dev \
-        libaom3 \
-        nasm
+        libaom3
 
 FROM base AS ffmpeg
 
@@ -161,7 +160,8 @@ RUN apt-get update && \
         libwebp7 \
         libwebpdemux2 \
         libwebpmux3 \
-        libhwy1t64 && \
+        libhwy1t64 \
+        libaom3 && \
     if [ $(arch) = "x86_64" ]; then \
         wget https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.17193.4/intel-igc-core_1.0.17193.4_amd64.deb && \
         wget https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.17193.4/intel-igc-opencl_1.0.17193.4_amd64.deb && \
