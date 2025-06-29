@@ -42,8 +42,7 @@ RUN ./configure-apt.sh && \
         libhwy-dev \
         libwebp-dev \
         libio-compress-brotli-perl \
-        libaom-dev \
-        libaom3
+        libaom-dev
 
 FROM base AS ffmpeg
 
