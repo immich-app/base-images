@@ -41,7 +41,10 @@ RUN ./configure-apt.sh && \
         libdav1d-dev \
         libhwy-dev \
         libwebp-dev \
-        libio-compress-brotli-perl
+        libio-compress-brotli-perl \
+        libaom-dev \
+        libaom3 \
+        nasm
 
 FROM base AS ffmpeg
 
