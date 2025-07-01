@@ -16,10 +16,10 @@ cmake --preset=release-noplugins \
     -DWITH_LIBSHARPYUV=ON \
     -DWITH_LIBDE265=ON \
     -DWITH_AOM_DECODER=OFF \
-    -DWITH_AOM_ENCODER=OFF \
+    -DWITH_AOM_ENCODER=ON \
     -DWITH_X265=OFF \
     -DWITH_EXAMPLES=OFF \
     ..
-make install
+make -j"$(nproc)" install
 cd ../.. && rm -rf libheif
 ldconfig /usr/local/lib
