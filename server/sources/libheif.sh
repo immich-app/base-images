@@ -20,6 +20,6 @@ cmake --preset=release-noplugins \
     -DWITH_X265=OFF \
     -DWITH_EXAMPLES=OFF \
     ..
-make -j$(nproc) install
+make -j"$(nproc)" install
 cd ../.. && rm -rf libheif
 ldconfig /usr/local/lib
