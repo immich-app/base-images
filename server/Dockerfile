@@ -32,11 +32,12 @@ RUN ./configure-apt.sh && \
         wget \
         zlib1g \
         cpanminus \
-        wget \
         postgresql-client-14 \
         postgresql-client-15 \
         postgresql-client-16 \
-        postgresql-client-17 && \
+        postgresql-client-17 \
+        tini \
+        make && \
     apt-get install -t testing --no-install-recommends -yqq \
         libdav1d-dev \
         libhwy-dev \
@@ -99,6 +100,8 @@ RUN ./libvips.sh
 
 FROM base AS dev
 
+COPY --from=base /usr/bin/tini /usr/bin/tini
+COPY --from=base /usr/bin/make /usr/bin/make
 COPY --from=ffmpeg /usr/lib/jellyfin-ffmpeg /usr/lib/jellyfin-ffmpeg
 COPY --from=libvips /usr/local/lib/ /usr/local/lib/
 COPY --from=libvips /usr/local/bin/vips* /usr/local/bin/
