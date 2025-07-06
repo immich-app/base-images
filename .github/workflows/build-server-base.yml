@@ -37,7 +37,7 @@ jobs:
       - name: Check if we should force jobs to run
         id: should_force
         run: echo "should_force=${{ steps.found_paths.outputs.workflow == 'true' || startsWith(github.ref, 'refs/tags') || github.ref_name == 'main' }}" >> "$GITHUB_OUTPUT"
-  
+
   build_and_push:
     needs: pre-job
     uses: immich-app/devtools/.github/workflows/multi-runner-build.yml@129aeda75a450666ce96e8bc8126652e717917a7 # multi-runner-build-workflow-0.1.1
@@ -54,6 +54,7 @@ jobs:
       image: base-server-${{ matrix.target }}
       context: server
       dockerfile: server/Dockerfile
+      target: ${{ matrix.target }}
 
   success-check:
     needs: build_and_push
