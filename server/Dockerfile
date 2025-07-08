@@ -1,4 +1,4 @@
-FROM node:22.16.0-bookworm@sha256:0b5b940c21ab03353de9042f9166c75bcfc53c4cd0508c7fd88576646adbf875 AS base
+FROM node:22.17.0-bookworm@sha256:2fa6c977460b56d4d8278947ab56faeb312bc4cc6c4cf78920c6de27812f51c5 AS base
 
 WORKDIR /usr/src/app
 
@@ -118,7 +118,7 @@ RUN jq -n \
     '{sources: $sources[0], packages: $packages[0]}' \
     > /build/build-lock.json
 
-FROM node:22.16.0-bookworm-slim@sha256:2f3571619daafc6b53232ebf2fcc0817c1e64795e92de317c1684a915d13f1a5 AS prod
+FROM node:22.17.0-bookworm-slim@sha256:b04ce4ae4e95b522112c2e5c52f781471a5cbc3b594527bcddedee9bc48c03a0 AS prod
 
 WORKDIR /build
 
