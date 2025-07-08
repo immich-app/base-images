@@ -40,7 +40,7 @@ jobs:
   
   build_and_push:
     needs: pre-job
-    uses: immich-app/devtools/.github/workflows/multi-runner-build.yml@094bfb927b8cd75b343abaac27b3241be0fccfe9 # multi-runner-build-workflow-0.1.0
+    uses: immich-app/devtools/.github/workflows/multi-runner-build.yml@129aeda75a450666ce96e8bc8126652e717917a7 # multi-runner-build-workflow-0.1.1
     if: ${{ needs.pre-job.outputs.should_run == 'true' }}
     strategy:
       fail-fast: true
