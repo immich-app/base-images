@@ -108,6 +108,9 @@ COPY --from=libvips /usr/local/bin/vips* /usr/local/bin/
 COPY --from=libvips /usr/local/include/vips/ /usr/local/include/vips/
 COPY --from=geodata /build/geodata /build/geodata
 
+RUN ln -s /usr/lib/jellyfin-ffmpeg/ffmpeg /usr/bin
+RUN ln -s /usr/lib/jellyfin-ffmpeg/ffprobe /usr/bin
+
 COPY packages/ ./packages/
 RUN jq -s '.' packages/*.json > /tmp/packages.json
 COPY sources/ ./sources/
