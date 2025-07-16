@@ -37,7 +37,18 @@ RUN ./configure-apt.sh && \
         postgresql-client-16 \
         postgresql-client-17 \
         tini \
-        make && \
+        make \
+        ocl-icd-libopencl1 \
+        libopenmpt0 \
+        libbluray2 \
+        libvpx7 \
+        libzvbi0 \
+        libmp3lame0 \
+        libopus0 \
+        libtheora0 \
+        libvorbis0a \
+        libvorbisenc2 \
+        libx264-164 && \
     apt-get install -t testing --no-install-recommends -yqq \
         libdav1d-dev \
         libhwy-dev \
@@ -103,10 +114,16 @@ FROM base AS dev
 COPY --from=base /usr/bin/tini /usr/bin/tini
 COPY --from=base /usr/bin/make /usr/bin/make
 COPY --from=ffmpeg /usr/lib/jellyfin-ffmpeg /usr/lib/jellyfin-ffmpeg
+COPY --from=ffmpeg /usr/bin/ffmpeg /usr/bin/ffmpeg
+COPY --from=ffmpeg /usr/bin/ffprobe /usr/bin/ffprobe
 COPY --from=libvips /usr/local/lib/ /usr/local/lib/
 COPY --from=libvips /usr/local/bin/vips* /usr/local/bin/
 COPY --from=libvips /usr/local/include/vips/ /usr/local/include/vips/
 COPY --from=geodata /build/geodata /build/geodata
+
+ENV LD_LIBRARY_PATH=/usr/lib/jellyfin-ffmpeg/lib:/usr/lib/wsl/lib:$LD_LIBRARY_PATH
+
+RUN ldconfig /usr/local/lib
 
 COPY packages/ ./packages/
 RUN jq -s '.' packages/*.json > /tmp/packages.json
