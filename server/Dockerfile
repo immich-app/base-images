@@ -1,8 +1,8 @@
-<<<<<<< HEAD
-FROM node:22.19.0-bookworm@sha256:6fe286835c595e53cdafc4889e9eff903dd3008a3050c1675809148d8e0df805 AS base
-=======
-FROM node:22.18.0-trixie-slim@sha256:d02467efc049791a7586a20e36d9219d184ab89e45b19c57e88cff322678c233 AS base
->>>>>>> bbc4824 (feat: trixie)
+ARG DEBIAN_RELEASE=trixie
+
+FROM node:22.18.0-${DEBIAN_RELEASE}-slim@sha256:d02467efc049791a7586a20e36d9219d184ab89e45b19c57e88cff322678c233 AS base
+ARG DEBIAN_RELEASE
+ENV DEBIAN_RELEASE=${DEBIAN_RELEASE}
 
 WORKDIR /usr/src/app
 
@@ -19,7 +19,7 @@ RUN ./configure-apt.sh && \
 
 ADD --chmod=644 https://www.postgresql.org/media/keys/ACCC4CF8.asc /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc
 
-RUN echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt trixie-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
+RUN echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt ${DEBIAN_RELEASE}-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
     apt-get update && \
     apt-get install --no-install-recommends -yqq \
         git \
@@ -73,6 +73,8 @@ RUN echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.as
         libaom-dev
 
 FROM base AS ffmpeg
+ARG DEBIAN_RELEASE
+ENV DEBIAN_RELEASE=${DEBIAN_RELEASE}
 
 COPY packages/ffmpeg.json packages/ffmpeg.sh ./
 RUN ./ffmpeg.sh
@@ -151,7 +153,9 @@ RUN jq -n \
     '{sources: $sources[0], packages: $packages[0]}' \
     > /build/build-lock.json
 
-FROM node:22.18.0-trixie-slim@sha256:d02467efc049791a7586a20e36d9219d184ab89e45b19c57e88cff322678c233 AS prod
+FROM node:22.18.0-${DEBIAN_RELEASE}-slim@sha256:d02467efc049791a7586a20e36d9219d184ab89e45b19c57e88cff322678c233 AS prod
+ARG DEBIAN_RELEASE
+ENV DEBIAN_RELEASE=${DEBIAN_RELEASE}
 
 WORKDIR /build
 
@@ -164,7 +168,7 @@ RUN apt-get update && \
 
 ADD --chmod=644 https://www.postgresql.org/media/keys/ACCC4CF8.asc /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc
 
-RUN echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt trixie-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
+RUN echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt ${DEBIAN_RELEASE}-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
     apt-get update && \
     apt-get install --no-install-recommends -yqq \
         jq \
