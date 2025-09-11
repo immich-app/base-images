@@ -88,7 +88,7 @@ jobs:
           fi
 
       - name: Determine image push
-        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7.1.0
+        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8.0.0
         id: should-release
         with:
           script: |
@@ -97,7 +97,7 @@ jobs:
             return "${{ steps.changed-version.outputs.any_changed }}" == "true";
 
       - name: Determine latest version of VectorChord in matrix
-        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7.1.0
+        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8.0.0
         id: latest-vchord
         env:
           VERSION_MATRIX: ${{ needs.pre-job.outputs.matrix }}
@@ -109,7 +109,7 @@ jobs:
             return latest;
 
       - name: Determine latest version of pgvector in matrix
-        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7.1.0
+        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8.0.0
         id: latest-pgvector
         env:
           VERSION_MATRIX: ${{ needs.pre-job.outputs.matrix }}
