@@ -48,7 +48,6 @@ RUN echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.as
         wget \
         unzip \
         zlib1g \
-        cpanminus \
         postgresql-client-14 \
         postgresql-client-15 \
         postgresql-client-16 \
