@@ -6,8 +6,8 @@ ENV DEBIAN_RELEASE=${DEBIAN_RELEASE}
 
 WORKDIR /usr/src/app
 
-ENV LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH \
-    LD_RUN_PATH=/usr/local/lib:$LD_RUN_PATH
+ENV LD_LIBRARY_PATH=/usr/local/lib \
+    LD_RUN_PATH=/usr/local/lib
 
 COPY configure-apt.sh ./
 
@@ -229,6 +229,6 @@ COPY --from=dev /build/ /build/
 
 WORKDIR /usr/src/app
 
-ENV LD_LIBRARY_PATH=/usr/lib/jellyfin-ffmpeg/lib:/usr/lib/wsl/lib:$LD_LIBRARY_PATH
+ENV LD_LIBRARY_PATH=/usr/lib/jellyfin-ffmpeg/lib:/usr/lib/wsl/lib
 
 RUN ldconfig /usr/local/lib
