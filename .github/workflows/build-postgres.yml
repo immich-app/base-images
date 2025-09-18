@@ -29,8 +29,7 @@ jobs:
             postgres:
               - 'postgres/**'
           force-filters: |
-            workflow:
-              - '.github/workflows/build-postgres.yml'
+            - '.github/workflows/build-postgres.yml'
   
   matrix:
     runs-on: ubuntu-latest
