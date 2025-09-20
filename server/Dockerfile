@@ -39,7 +39,7 @@ RUN echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.as
         libmimalloc3 \
         # libjpeg62-turbo-dev is just for building libvips; the final image uses jpegli (/usr/local/lib/libjpeg.so.62) built alongside libjxl
         libjpeg62-turbo-dev \
-        liblcms2-2 \
+        liblcms2-dev \
         librsvg2-dev \
         libspng-dev \
         meson \
