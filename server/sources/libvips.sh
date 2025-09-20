@@ -8,7 +8,7 @@ git clone https://github.com/libvips/libvips.git
 cd libvips
 git reset --hard "$LIBVIPS_REVISION"
 
-meson setup build --buildtype=release --libdir=lib -Dintrospection=disabled -Dtiff=disabled -Dlcms=enabled
+meson setup build --buildtype=release --libdir=lib -Dintrospection=disabled -Dtiff=disabled
 cd build
 ninja install
 cd .. && rm -rf libvips
