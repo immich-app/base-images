@@ -161,9 +161,9 @@ WORKDIR /build
 
 COPY configure-apt.sh packages/ffmpeg.json packages/ffmpeg.sh ./
 
-RUN apt-get update && \
+RUN ./configure-apt.sh && \
+    apt-get update && \
     apt-get install curl ca-certificates --no-install-recommends -yqq && \
-    ./configure-apt.sh && \
     mkdir -p /usr/share/postgresql-common/pgdg
 
 ADD --chmod=644 https://www.postgresql.org/media/keys/ACCC4CF8.asc /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc
@@ -182,7 +182,6 @@ RUN echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.as
         liblcms2-2 \
         liblqr-1-0 \
         libltdl7 \
-        libmimalloc3 \
         libopenexr-3-1-30 \
         libopenjp2-7 \
         librsvg2-2 \
@@ -213,6 +212,7 @@ RUN echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.as
         dpkg -i *.deb && \
         apt-get install --no-install-recommends -yqq intel-media-va-driver-non-free; \
     fi && \
+    apt-get install -t testing --no-install-recommends -yqq libmimalloc3 && \
     apt-get remove -yqq jq wget ca-certificates && \
     apt-get autoremove -yqq && \
     apt-get clean && \
