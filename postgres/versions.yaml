@@ -3,12 +3,14 @@ pg:
   - "15"
   - "16"
   - "17"
+  - "18"
 vectorchord:
   - "0.3.0"
   - "0.4.2"
   - "0.4.3"
+  - "0.5.3"
 pgvector:
-  - "0.8.0"
+  - "0.8.1"
 pgvectors:
   - "0.2.0"
   - "0.2.1"
@@ -19,3 +21,9 @@ exclude:
     pg: "17"
   - pgvectors: "0.2.1"
     pg: "17"
+  - pgvectors: "0.2.0"
+    pg: "18"
+  - pgvectors: "0.2.1"
+    pg: "18"
+  - pgvectors: "0.3.0"
+    pg: "18"
