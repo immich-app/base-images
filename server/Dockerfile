@@ -1,13 +1,14 @@
 ARG DEBIAN_RELEASE=trixie
 
 FROM node:22.19.0-${DEBIAN_RELEASE}-slim@sha256:d02467efc049791a7586a20e36d9219d184ab89e45b19c57e88cff322678c233 AS base
+ARG DEBIAN_FRONTEND=noninteractive
 ARG DEBIAN_RELEASE
 ENV DEBIAN_RELEASE=${DEBIAN_RELEASE}
 
 WORKDIR /usr/src/app
 
-ENV LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH \
-    LD_RUN_PATH=/usr/local/lib:$LD_RUN_PATH
+ENV LD_LIBRARY_PATH=/usr/local/lib \
+    LD_RUN_PATH=/usr/local/lib
 
 COPY configure-apt.sh ./
 
@@ -48,7 +49,6 @@ RUN echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.as
         wget \
         unzip \
         zlib1g \
-        cpanminus \
         postgresql-client-14 \
         postgresql-client-15 \
         postgresql-client-16 \
@@ -154,6 +154,7 @@ RUN jq -n \
     > /build/build-lock.json
 
 FROM node:22.19.0-${DEBIAN_RELEASE}-slim@sha256:d02467efc049791a7586a20e36d9219d184ab89e45b19c57e88cff322678c233 AS prod
+ARG DEBIAN_FRONTEND=noninteractive
 ARG DEBIAN_RELEASE
 ENV DEBIAN_RELEASE=${DEBIAN_RELEASE}
 
@@ -230,6 +231,6 @@ COPY --from=dev /build/ /build/
 
 WORKDIR /usr/src/app
 
-ENV LD_LIBRARY_PATH=/usr/lib/jellyfin-ffmpeg/lib:/usr/lib/wsl/lib:$LD_LIBRARY_PATH
+ENV LD_LIBRARY_PATH=/usr/lib/jellyfin-ffmpeg/lib:/usr/lib/wsl/lib
 
 RUN ldconfig /usr/local/lib
