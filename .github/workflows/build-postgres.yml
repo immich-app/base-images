@@ -23,7 +23,7 @@ jobs:
     steps:
       - name: Check what should run
         id: check
-        uses: immich-app/devtools/actions/pre-job@24820aa4ef67959b0dcf69a438cccf00d7c7042b # pre-job-action-v1.0.1
+        uses: immich-app/devtools/actions/pre-job@5f91b52dfbb92b8d96ca411ab59c896cd59714ca # pre-job-action-v1.1.0
         with:
           filters: |
             postgres:
@@ -45,7 +45,7 @@ jobs:
 
         - id: get-versions
           name: Get dependency versions
-          uses: mikefarah/yq@6251e95af8df3505def48c71f3119836701495d6 # v4.47.2
+          uses: mikefarah/yq@0ecdce24e83f0fa127940334be98c86b07b0c488 # v4.48.1
           with:
             cmd: yq eval -o=json -I=0 postgres/versions.yaml
 
@@ -71,7 +71,7 @@ jobs:
         uses: docker/setup-buildx-action@e468171a9de216ec08956ac3ada2f0791b6bd435 # v3.11.1
 
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@184bdaa0721073962dff0199f1fb9940f07167d1 # v3.5.0
+        uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3.6.0
         if: ${{ !github.event.pull_request.head.repo.fork }}
         with:
           registry: ghcr.io
