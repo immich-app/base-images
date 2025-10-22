@@ -20,28 +20,23 @@ jobs:
     permissions:
       contents: read
     outputs:
-      should_run: ${{ steps.found_paths.outputs.server == 'true' ||  steps.should_force.outputs.should_force == 'true' }}
+      should_run: ${{ steps.check.outputs.should_run }}
     steps:
-      - name: Checkout code
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
-        with:
-          persist-credentials: false
-      - id: found_paths
-        uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # v3.0.2
+      - name: Check what should run
+        id: check
+        uses: immich-app/devtools/actions/pre-job@5f91b52dfbb92b8d96ca411ab59c896cd59714ca # pre-job-action-v1.1.0
         with:
           filters: |
             server:
               - 'server/**'
-            workflow:
-              - '.github/workflows/build-server-base.yml'
-      - name: Check if we should force jobs to run
-        id: should_force
-        run: echo "should_force=${{ steps.found_paths.outputs.workflow == 'true' || startsWith(github.ref, 'refs/tags') || github.ref_name == 'main' }}" >> "$GITHUB_OUTPUT"
+          force-filters: |
+            - '.github/workflows/build-server-base.yml'
+          force: ${{ startsWith(github.ref, 'refs/tags') || github.ref_name == 'main' }}
 
   build_and_push:
     needs: pre-job
-    uses: immich-app/devtools/.github/workflows/multi-runner-build.yml@129aeda75a450666ce96e8bc8126652e717917a7 # multi-runner-build-workflow-0.1.1
-    if: ${{ needs.pre-job.outputs.should_run == 'true' }}
+    uses: immich-app/devtools/.github/workflows/multi-runner-build.yml@946acac326940f8badf09ccf591d9cb345d6a689 # multi-runner-build-workflow-0.2.1
+    if: ${{ fromJSON(needs.pre-job.outputs.should_run).server == true }}
     strategy:
       fail-fast: true
       matrix:
@@ -55,6 +50,7 @@ jobs:
       context: server
       dockerfile: server/Dockerfile
       target: ${{ matrix.target }}
+      release-tag-type: git-tag
 
   success-check:
     needs: build_and_push
