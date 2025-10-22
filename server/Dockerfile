@@ -53,6 +53,7 @@ RUN echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.as
         postgresql-client-15 \
         postgresql-client-16 \
         postgresql-client-17 \
+        postgresql-client-18 \
         tini \
         make \
         ocl-icd-libopencl1 \
@@ -198,6 +199,7 @@ RUN echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.as
         postgresql-client-15 \
         postgresql-client-16 \
         postgresql-client-17 \
+        postgresql-client-18 \
         libio-compress-brotli-perl \
         libwebp7 \
         libwebpdemux2 \
