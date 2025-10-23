@@ -175,6 +175,7 @@ RUN echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.as
     apt-get install --no-install-recommends -yqq \
         jq \
         libde265-0 \
+        libdrm2 \
         libexif12 \
         libexpat1 \
         libgcc-s1 \
@@ -204,6 +205,7 @@ RUN echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.as
         libwebp7 \
         libwebpdemux2 \
         libwebpmux3 \
+        libx265-215 \
         libhwy1t64 \
         libaom3 && \
         ./ffmpeg.sh && \
