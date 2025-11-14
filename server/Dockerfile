@@ -73,13 +73,6 @@ RUN echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.as
         libio-compress-brotli-perl \
         libaom-dev
 
-FROM base AS ffmpeg
-ARG DEBIAN_RELEASE
-ENV DEBIAN_RELEASE=${DEBIAN_RELEASE}
-
-COPY packages/ffmpeg.json packages/ffmpeg.sh ./
-RUN ./ffmpeg.sh
-
 FROM base AS geodata
 
 ADD https://download.geonames.org/export/dump/cities500.zip /build/geodata/cities500.zip
@@ -130,11 +123,14 @@ RUN ./libvips.sh
 
 FROM base AS dev
 
+ARG DEBIAN_RELEASE
+ENV DEBIAN_RELEASE=${DEBIAN_RELEASE}
+
+COPY packages/ffmpeg.json packages/ffmpeg.sh ./
+RUN ./ffmpeg.sh
+
 COPY --from=base /usr/bin/tini /usr/bin/tini
 COPY --from=base /usr/bin/make /usr/bin/make
-COPY --from=ffmpeg /usr/lib/jellyfin-ffmpeg /usr/lib/jellyfin-ffmpeg
-COPY --from=ffmpeg /usr/bin/ffmpeg /usr/bin/ffmpeg
-COPY --from=ffmpeg /usr/bin/ffprobe /usr/bin/ffprobe
 COPY --from=libvips /usr/local/lib/ /usr/local/lib/
 COPY --from=libvips /usr/local/bin/vips* /usr/local/bin/
 COPY --from=libvips /usr/local/include/vips/ /usr/local/include/vips/
@@ -175,7 +171,6 @@ RUN echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.as
     apt-get install --no-install-recommends -yqq \
         jq \
         libde265-0 \
-        libdrm2 \
         libexif12 \
         libexpat1 \
         libgcc-s1 \
@@ -205,7 +200,6 @@ RUN echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.as
         libwebp7 \
         libwebpdemux2 \
         libwebpmux3 \
-        libx265-215 \
         libhwy1t64 \
         libaom3 && \
         ./ffmpeg.sh && \
