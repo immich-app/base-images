@@ -26,6 +26,7 @@ jobs:
         id: check
         uses: immich-app/devtools/actions/pre-job@08bac802a312fc89808e0dd589271ca0974087b5 # pre-job-action-v2.0.0
         with:
+          github-token: ${{ github.token }}
           filters: |
             server:
               - 'server/**'
