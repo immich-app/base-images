@@ -41,11 +41,11 @@ jobs:
         matrix: ${{ steps.get-versions.outputs.result }}
     steps:
         - name: Checkout to repository
-          uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+          uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
 
         - id: get-versions
           name: Get dependency versions
-          uses: mikefarah/yq@0ecdce24e83f0fa127940334be98c86b07b0c488 # v4.48.1
+          uses: mikefarah/yq@45be35c06387d692bb6bf689919919e0e32e796f # v4.49.1
           with:
             cmd: yq eval -o=json -I=0 postgres/versions.yaml
 
@@ -60,7 +60,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
         with:
           fetch-depth: 0
 
