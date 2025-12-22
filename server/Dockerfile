@@ -32,7 +32,8 @@ RUN echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.as
         cmake \
         jq \
         libbrotli-dev \
-        libde265-dev \
+        # libde265 v1.0.16 includes a fix for HDR images
+        libde265-dev/testing \
         libexif-dev \
         libexpat1-dev \
         libglib2.0-dev \
@@ -170,7 +171,7 @@ RUN echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.as
     apt-get update && \
     apt-get install --no-install-recommends -yqq \
         jq \
-        libde265-0 \
+        libde265-0/testing \
         libexif12 \
         libexpat1 \
         libgcc-s1 \
