@@ -32,11 +32,14 @@ jobs:
           tag=$(date +'%Y%m%d%H%M')
           git config --global user.name 'GitHub Actions'
           git config --global user.email 'github-actions@users.noreply.github.com'
+          
+          # Fetch all tags
+          git fetch --tags
 
-          if [ git tag -l $tag ]; then
+          if git tag -l "$tag" | grep -q .; then
             echo "Tag $tag already exists."
             exit 1
           else
-            git tag $tag
-            git push origin $tag
+            git tag "$tag"
+            git push origin "$tag"
           fi
