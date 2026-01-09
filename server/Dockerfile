@@ -1,6 +1,6 @@
 ARG DEBIAN_RELEASE=trixie
 
-FROM node:22.19.0-${DEBIAN_RELEASE}-slim@sha256:d02467efc049791a7586a20e36d9219d184ab89e45b19c57e88cff322678c233 AS base
+FROM node:24.12.0-${DEBIAN_RELEASE}-slim@sha256:b05474903f463ce4064c09986525e6588c3e66c51b69be9c93a39fb359f883ce AS base
 ARG DEBIAN_FRONTEND=noninteractive
 ARG DEBIAN_RELEASE
 ENV DEBIAN_RELEASE=${DEBIAN_RELEASE}
@@ -8,71 +8,71 @@ ENV DEBIAN_RELEASE=${DEBIAN_RELEASE}
 WORKDIR /usr/src/app
 
 ENV LD_LIBRARY_PATH=/usr/local/lib \
-    LD_RUN_PATH=/usr/local/lib
+  LD_RUN_PATH=/usr/local/lib
 
 COPY configure-apt.sh ./
 
 # Install ca-certificates first, then setup PostgreSQL repository
 RUN ./configure-apt.sh && \
-    apt-get update && \
-    apt-get install --no-install-recommends -yqq ca-certificates && \
-    mkdir -p /usr/share/postgresql-common/pgdg
+  apt-get update && \
+  apt-get install --no-install-recommends -yqq ca-certificates && \
+  mkdir -p /usr/share/postgresql-common/pgdg
 
 ADD --chmod=644 https://www.postgresql.org/media/keys/ACCC4CF8.asc /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc
 
 RUN echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt ${DEBIAN_RELEASE}-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
-    apt-get update && \
-    apt-get install --no-install-recommends -yqq \
-        git \
-        autoconf \
-        automake \
-        libtool \
-        libltdl-dev \
-        build-essential \
-        cmake \
-        jq \
-        libbrotli-dev \
-        # libde265 v1.0.16 includes a fix for HDR images
-        libde265-dev/testing \
-        libexif-dev \
-        libexpat1-dev \
-        libglib2.0-dev \
-        libgsf-1-dev \
-        libmimalloc3 \
-        # libjpeg62-turbo-dev is just for building libvips; the final image uses jpegli (/usr/local/lib/libjpeg.so.62) built alongside libjxl
-        libjpeg62-turbo-dev \
-        liblcms2-dev \
-        librsvg2-dev \
-        libspng-dev \
-        meson \
-        ninja-build \
-        pkg-config \
-        wget \
-        unzip \
-        zlib1g \
-        postgresql-client-14 \
-        postgresql-client-15 \
-        postgresql-client-16 \
-        postgresql-client-17 \
-        postgresql-client-18 \
-        tini \
-        make \
-        ocl-icd-libopencl1 \
-        libopenmpt0 \
-        libbluray2 \
-        libvpx9 \
-        libzvbi0 \
-        libmp3lame0 \
-        libopus0 \
-        libtheora0 \
-        libvorbis0a \
-        libvorbisenc2 \
-        libx264-164 \
-        libdav1d-dev \
-        libhwy-dev \
-        libwebp-dev \
-        libio-compress-brotli-perl \
-        libaom-dev
+  apt-get update && \
+  apt-get install --no-install-recommends -yqq \
+  git \
+  autoconf \
+  automake \
+  libtool \
+  libltdl-dev \
+  build-essential \
+  cmake \
+  jq \
+  libbrotli-dev \
+  # libde265 v1.0.16 includes a fix for HDR images
+  libde265-dev/testing \
+  libexif-dev \
+  libexpat1-dev \
+  libglib2.0-dev \
+  libgsf-1-dev \
+  libmimalloc3 \
+  # libjpeg62-turbo-dev is just for building libvips; the final image uses jpegli (/usr/local/lib/libjpeg.so.62) built alongside libjxl
+  libjpeg62-turbo-dev \
+  liblcms2-dev \
+  librsvg2-dev \
+  libspng-dev \
+  meson \
+  ninja-build \
+  pkg-config \
+  wget \
+  unzip \
+  zlib1g \
+  postgresql-client-14 \
+  postgresql-client-15 \
+  postgresql-client-16 \
+  postgresql-client-17 \
+  postgresql-client-18 \
+  tini \
+  make \
+  ocl-icd-libopencl1 \
+  libopenmpt0 \
+  libbluray2 \
+  libvpx9 \
+  libzvbi0 \
+  libmp3lame0 \
+  libopus0 \
+  libtheora0 \
+  libvorbis0a \
+  libvorbisenc2 \
+  libx264-164 \
+  libdav1d-dev \
+  libhwy-dev \
+  libwebp-dev \
+  libio-compress-brotli-perl \
+  libaom-dev
 
 FROM base AS geodata
 
@@ -82,7 +82,7 @@ ADD --chmod=444 https://download.geonames.org/export/dump/admin2Codes.txt /build
 ADD --chmod=444 https://raw.githubusercontent.com/nvkelso/natural-earth-vector/v5.1.2/geojson/ne_10m_admin_0_countries.geojson /build/geodata/ne_10m_admin_0_countries.geojson
 
 RUN umask 0333 && unzip /build/geodata/cities500.zip -d /build/geodata/ && \
-    rm /build/geodata/cities500.zip && date --iso-8601=seconds | tr -d "\n" > /build/geodata/geodata-date.txt
+  rm /build/geodata/cities500.zip && date --iso-8601=seconds | tr -d "\n" > /build/geodata/geodata-date.txt
 
 FROM base AS libheif
 
@@ -111,8 +111,8 @@ COPY --from=libjxl /usr/local/include/jconfig.h /usr/local/include/jmorecfg.h /u
 
 # COPY resolves symlinks unless copying the enclosing folder, so this is a workaround to get the correct result
 RUN cp -r /usr/local/lib/libheif/libheif* /usr/local/lib/libjxl/libjxl* /usr/local/lib/libjxl/libjpeg* /usr/local/lib && \
-    mv /usr/local/lib/libheif/pkgconfig/* /usr/local/lib/libjxl/pkgconfig/* /usr/local/lib/pkgconfig && \
-    rm -r /usr/local/lib/libheif /usr/local/lib/libjxl
+  mv /usr/local/lib/libheif/pkgconfig/* /usr/local/lib/libjxl/pkgconfig/* /usr/local/lib/pkgconfig && \
+  rm -r /usr/local/lib/libheif /usr/local/lib/libjxl
 
 COPY sources/imagemagick.json sources/imagemagick.sh ./
 RUN ./imagemagick.sh
@@ -146,12 +146,12 @@ RUN jq -s '.' packages/*.json > /tmp/packages.json
 COPY sources/ ./sources/
 RUN jq -s '.' sources/*.json > /tmp/sources.json
 RUN jq -n \
-    --slurpfile sources /tmp/sources.json \
-    --slurpfile packages /tmp/packages.json \
-    '{sources: $sources[0], packages: $packages[0]}' \
-    > /build/build-lock.json
+  --slurpfile sources /tmp/sources.json \
+  --slurpfile packages /tmp/packages.json \
+  '{sources: $sources[0], packages: $packages[0]}' \
+  > /build/build-lock.json
 
-FROM node:22.19.0-${DEBIAN_RELEASE}-slim@sha256:d02467efc049791a7586a20e36d9219d184ab89e45b19c57e88cff322678c233 AS prod
+FROM node:24.12.0-${DEBIAN_RELEASE}-slim@sha256:b05474903f463ce4064c09986525e6588c3e66c51b69be9c93a39fb359f883ce AS prod
 ARG DEBIAN_FRONTEND=noninteractive
 ARG DEBIAN_RELEASE
 ENV DEBIAN_RELEASE=${DEBIAN_RELEASE}
@@ -161,75 +161,75 @@ WORKDIR /build
 COPY configure-apt.sh packages/ffmpeg.json packages/ffmpeg.sh ./
 
 RUN ./configure-apt.sh && \
-    apt-get update && \
-    apt-get install curl ca-certificates --no-install-recommends -yqq && \
-    mkdir -p /usr/share/postgresql-common/pgdg
+  apt-get update && \
+  apt-get install curl ca-certificates --no-install-recommends -yqq && \
+  mkdir -p /usr/share/postgresql-common/pgdg
 
 ADD --chmod=644 https://www.postgresql.org/media/keys/ACCC4CF8.asc /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc
 
 RUN echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt ${DEBIAN_RELEASE}-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
-    apt-get update && \
-    apt-get install --no-install-recommends -yqq \
-        jq \
-        libde265-0/testing \
-        libexif12 \
-        libexpat1 \
-        libgcc-s1 \
-        libglib2.0-0 \
-        libgomp1 \
-        libgsf-1-114 \
-        liblcms2-2 \
-        liblqr-1-0 \
-        libltdl7 \
-        libopenexr-3-1-30 \
-        libopenjp2-7 \
-        librsvg2-2 \
-        libspng0 \
-        mesa-utils \
-        mesa-va-drivers \
-        mesa-vulkan-drivers \
-        tini \
-        wget \
-        zlib1g \
-        ocl-icd-libopencl1 \
-        postgresql-client-14 \
-        postgresql-client-15 \
-        postgresql-client-16 \
-        postgresql-client-17 \
-        postgresql-client-18 \
-        libio-compress-brotli-perl \
-        libwebp7 \
-        libwebpdemux2 \
-        libwebpmux3 \
-        libhwy1t64 \
-        libaom3 && \
-        ./ffmpeg.sh && \
-    if [ $(arch) = "x86_64" ]; then \
-        # Old driver
-        wget https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.17537.24/intel-igc-core_1.0.17537.24_amd64.deb && \
-        wget https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.17537.24/intel-igc-opencl_1.0.17537.24_amd64.deb && \
-        wget https://github.com/intel/compute-runtime/releases/download/24.35.30872.36/intel-opencl-icd-legacy1_24.35.30872.36_amd64.deb && \
-        # New driver
-        wget https://github.com/intel/intel-graphics-compiler/releases/download/v2.22.2/intel-igc-core-2_2.22.2+20121_amd64.deb && \
-        wget https://github.com/intel/intel-graphics-compiler/releases/download/v2.22.2/intel-igc-opencl-2_2.22.2+20121_amd64.deb && \
-        wget https://github.com/intel/compute-runtime/releases/download/25.44.36015.5/intel-opencl-icd_25.44.36015.5-0_amd64.deb &&  \
-        # Shared libigdgmm1
-        wget -nv https://github.com/intel/compute-runtime/releases/download/25.44.36015.5/libigdgmm12_22.8.2_amd64.deb && \
-        dpkg -i *.deb && \
-        apt-get install --no-install-recommends -yqq intel-media-va-driver-non-free; \
-    fi && \
-    apt-get install -t testing --no-install-recommends -yqq libmimalloc3 && \
-    apt-get remove -yqq jq wget ca-certificates && \
-    apt-get autoremove -yqq && \
-    apt-get clean && \
-    rm -rf \
-        configure-apt.sh \
-        ffmpeg* \
-        *.deb \
-        /var/lib/apt/lists \
-        /usr/lib/$(arch)-linux-gnu/libjpeg.so* \
-        /usr/share/doc/libjpeg62-turbo \
-        /usr/share/lintian/overrides/libjpeg62-turbo
+  apt-get update && \
+  apt-get install --no-install-recommends -yqq \
+  jq \
+  libde265-0/testing \
+  libexif12 \
+  libexpat1 \
+  libgcc-s1 \
+  libglib2.0-0 \
+  libgomp1 \
+  libgsf-1-114 \
+  liblcms2-2 \
+  liblqr-1-0 \
+  libltdl7 \
+  libopenexr-3-1-30 \
+  libopenjp2-7 \
+  librsvg2-2 \
+  libspng0 \
+  mesa-utils \
+  mesa-va-drivers \
+  mesa-vulkan-drivers \
+  tini \
+  wget \
+  zlib1g \
+  ocl-icd-libopencl1 \
+  postgresql-client-14 \
+  postgresql-client-15 \
+  postgresql-client-16 \
+  postgresql-client-17 \
+  postgresql-client-18 \
+  libio-compress-brotli-perl \
+  libwebp7 \
+  libwebpdemux2 \
+  libwebpmux3 \
+  libhwy1t64 \
+  libaom3 && \
+  ./ffmpeg.sh && \
+  if [ $(arch) = "x86_64" ]; then \
+  # Old driver
+  wget https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.17537.24/intel-igc-core_1.0.17537.24_amd64.deb && \
+  wget https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.17537.24/intel-igc-opencl_1.0.17537.24_amd64.deb && \
+  wget https://github.com/intel/compute-runtime/releases/download/24.35.30872.36/intel-opencl-icd-legacy1_24.35.30872.36_amd64.deb && \
+  # New driver
+  wget https://github.com/intel/intel-graphics-compiler/releases/download/v2.22.2/intel-igc-core-2_2.22.2+20121_amd64.deb && \
+  wget https://github.com/intel/intel-graphics-compiler/releases/download/v2.22.2/intel-igc-opencl-2_2.22.2+20121_amd64.deb && \
+  wget https://github.com/intel/compute-runtime/releases/download/25.44.36015.5/intel-opencl-icd_25.44.36015.5-0_amd64.deb &&  \
+  # Shared libigdgmm1
+  wget -nv https://github.com/intel/compute-runtime/releases/download/25.44.36015.5/libigdgmm12_22.8.2_amd64.deb && \
+  dpkg -i *.deb && \
+  apt-get install --no-install-recommends -yqq intel-media-va-driver-non-free; \
+  fi && \
+  apt-get install -t testing --no-install-recommends -yqq libmimalloc3 && \
+  apt-get remove -yqq jq wget ca-certificates && \
+  apt-get autoremove -yqq && \
+  apt-get clean && \
+  rm -rf \
+  configure-apt.sh \
+  ffmpeg* \
+  *.deb \
+  /var/lib/apt/lists \
+  /usr/lib/$(arch)-linux-gnu/libjpeg.so* \
+  /usr/share/doc/libjpeg62-turbo \
+  /usr/share/lintian/overrides/libjpeg62-turbo
 
 COPY --from=dev /usr/local/lib/ /usr/local/lib/
 COPY --from=dev /build/ /build/
