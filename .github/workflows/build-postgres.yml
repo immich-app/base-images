@@ -23,7 +23,7 @@ jobs:
     steps:
       - name: Check what should run
         id: check
-        uses: immich-app/devtools/actions/pre-job@08bac802a312fc89808e0dd589271ca0974087b5 # pre-job-action-v2.0.0
+        uses: immich-app/devtools/actions/pre-job@4effdb9faa3c120fa03f487f0a476d55fc4cd9f2 # pre-job-action-v2.0.1
         with:
           github-token: ${{ github.token }}
           filters: |
