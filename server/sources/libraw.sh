@@ -9,7 +9,7 @@ cd libraw
 git reset --hard "$LIBRAW_REVISION"
 
 autoreconf --install
-./configure
+./configure --disable-examples
 echo "Building libraw using $(nproc) threads"
 make -j"$(nproc)"
 make install
