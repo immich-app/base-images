@@ -46,7 +46,7 @@ jobs:
 
         - id: get-versions
           name: Get dependency versions
-          uses: mikefarah/yq@065b200af9851db0d5132f50bc10b1406ea5c0a8 # v4.50.1
+          uses: mikefarah/yq@4973c355e6740937ade1dfe3aab04b257b893191 # v4.51.1
           with:
             cmd: yq eval -o=json -I=0 postgres/versions.yaml
 
@@ -72,7 +72,7 @@ jobs:
         uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3.12.0
 
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3.6.0
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
         if: ${{ !github.event.pull_request.head.repo.fork }}
         with:
           registry: ghcr.io
