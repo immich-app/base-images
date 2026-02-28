@@ -8,9 +8,8 @@ git clone https://github.com/intel/media-driver.git
 cd media-driver && git reset --hard "${INTEL_MEDIA_DRIVER_REVISION}" && cd ..
 mkdir build_media
 cd build_media
-export ENABLE_PRODUCTION_KMD=ON
 cmake \
-  -D DINSTALL_DRIVER_SYSCONF=OFF \
+  -D INSTALL_DRIVER_SYSCONF=OFF \
   -D ENABLE_KERNELS=ON \
   -D ENABLE_NONFREE_KERNELS=ON \
   -D BUILD_CMRTLIB=OFF \
