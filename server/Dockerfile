@@ -72,7 +72,13 @@ RUN echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.as
   libhwy-dev \
   libwebp-dev \
   libio-compress-brotli-perl \
-  libaom-dev
+  # Intel Media Driver build dependencies
+  libva-dev \
+  libdrm-dev \
+  libigdgmm-dev \
+  libx11-dev \
+  ninja-build \
+  pkgconf
 
 FROM base AS geodata
 
@@ -122,6 +128,13 @@ FROM imagemagick AS libvips
 COPY sources/libvips.json sources/libvips.sh ./
 RUN ./libvips.sh
 
+FROM base AS intel-media-driver
+
+COPY sources/intel-media-driver.json sources/intel-media-driver.sh ./
+RUN if [ "$(arch)" = "x86_64" ]; then \
+  ./intel-media-driver.sh; \
+  fi
+
 FROM base AS dev
 
 ARG DEBIAN_RELEASE
@@ -135,6 +148,7 @@ COPY --from=base /usr/bin/make /usr/bin/make
 COPY --from=libvips /usr/local/lib/ /usr/local/lib/
 COPY --from=libvips /usr/local/bin/vips* /usr/local/bin/
 COPY --from=libvips /usr/local/include/vips/ /usr/local/include/vips/
+COPY --from=intel-media-driver /usr/lib/x86_64-linux-gnu/dri/ /usr/lib/x86_64-linux-gnu/dri/
 COPY --from=geodata /build/geodata /build/geodata
 
 ENV LD_LIBRARY_PATH=/usr/lib/jellyfin-ffmpeg/lib:/usr/lib/wsl/lib:$LD_LIBRARY_PATH
@@ -210,13 +224,12 @@ RUN echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.as
   wget https://github.com/intel/intel-graphics-compiler/releases/download/igc-1.0.17537.24/intel-igc-opencl_1.0.17537.24_amd64.deb && \
   wget https://github.com/intel/compute-runtime/releases/download/24.35.30872.36/intel-opencl-icd-legacy1_24.35.30872.36_amd64.deb && \
   # New driver
-  wget https://github.com/intel/intel-graphics-compiler/releases/download/v2.27.10/intel-igc-core-2_2.27.10+20617_amd64.deb && \
-  wget https://github.com/intel/intel-graphics-compiler/releases/download/v2.27.10/intel-igc-opencl-2_2.27.10+20617_amd64.deb && \
-  wget https://github.com/intel/compute-runtime/releases/download/26.01.36711.4/intel-opencl-icd_26.01.36711.4-0_amd64.deb &&  \
+  wget https://github.com/intel/intel-graphics-compiler/releases/download/v2.28.4/intel-igc-core-2_2.28.4+20760_amd64.deb && \
+  wget https://github.com/intel/intel-graphics-compiler/releases/download/v2.28.4/intel-igc-opencl-2_2.28.4+20760_amd64.deb && \
+  wget https://github.com/intel/compute-runtime/releases/download/26.05.37020.3/intel-opencl-icd_26.05.37020.3-0_amd64.deb &&  \
   # Shared libigdgmm1
-  wget -nv https://github.com/intel/compute-runtime/releases/download/26.01.36711.4/libigdgmm12_22.9.0_amd64.deb && \
-  dpkg -i *.deb && \
-  apt-get install --no-install-recommends -yqq intel-media-va-driver-non-free; \
+  wget -nv https://github.com/intel/compute-runtime/releases/download/26.05.37020.3/libigdgmm12_22.9.0_amd64.deb && \
+  dpkg -i *.deb; \
   fi && \
   apt-get install -t testing --no-install-recommends -yqq libmimalloc3 && \
   apt-get remove -yqq jq wget ca-certificates && \
