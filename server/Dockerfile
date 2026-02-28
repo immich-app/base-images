@@ -71,14 +71,17 @@ RUN echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.as
   libdav1d-dev \
   libhwy-dev \
   libwebp-dev \
-  libio-compress-brotli-perl \
-  # Intel Media Driver build dependencies
+  libio-compress-brotli-perl && \
+  # Intel Media Driver build dependencies \
+  if [ $(arch) = "x86_64" ]; then \
+  apt-get install --no-install-recommends -yqq \
   libva-dev \
   libdrm-dev \
   libigdgmm-dev \
   libx11-dev \
   ninja-build \
-  pkgconf
+  pkgconf; \
+  fi
 
 FROM base AS geodata
 
@@ -131,9 +134,8 @@ RUN ./libvips.sh
 FROM base AS intel-media-driver
 
 COPY sources/intel-media-driver.json sources/intel-media-driver.sh ./
-RUN if [ "$(arch)" = "x86_64" ]; then \
-  ./intel-media-driver.sh; \
-  fi
+RUN mkdir -p /usr/lib/x86_64-linux-gnu/dri && \
+    if [ "$(arch)" = "x86_64" ]; then ./intel-media-driver.sh; fi
 
 FROM base AS dev
 
