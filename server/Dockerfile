@@ -71,17 +71,8 @@ RUN echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.as
   libdav1d-dev \
   libhwy-dev \
   libwebp-dev \
-  libio-compress-brotli-perl && \
-  # Intel Media Driver build dependencies \
-  if [ $(arch) = "x86_64" ]; then \
-  apt-get install --no-install-recommends -yqq \
-  libva-dev \
-  libdrm-dev \
-  libigdgmm-dev \
-  libx11-dev \
-  ninja-build \
-  pkgconf; \
-  fi
+  libio-compress-brotli-perl \
+  libaom-dev
 
 FROM base AS geodata
 
@@ -131,12 +122,6 @@ FROM imagemagick AS libvips
 COPY sources/libvips.json sources/libvips.sh ./
 RUN ./libvips.sh
 
-FROM base AS intel-media-driver
-
-COPY sources/intel-media-driver.json sources/intel-media-driver.sh ./
-RUN mkdir -p /usr/lib/x86_64-linux-gnu/dri && \
-    if [ "$(arch)" = "x86_64" ]; then ./intel-media-driver.sh; fi
-
 FROM base AS dev
 
 ARG DEBIAN_RELEASE
@@ -150,7 +135,6 @@ COPY --from=base /usr/bin/make /usr/bin/make
 COPY --from=libvips /usr/local/lib/ /usr/local/lib/
 COPY --from=libvips /usr/local/bin/vips* /usr/local/bin/
 COPY --from=libvips /usr/local/include/vips/ /usr/local/include/vips/
-COPY --from=intel-media-driver /usr/lib/x86_64-linux-gnu/dri/ /usr/lib/x86_64-linux-gnu/dri/
 COPY --from=geodata /build/geodata /build/geodata
 
 ENV LD_LIBRARY_PATH=/usr/lib/jellyfin-ffmpeg/lib:/usr/lib/wsl/lib:$LD_LIBRARY_PATH
