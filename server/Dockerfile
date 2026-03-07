@@ -38,7 +38,7 @@ RUN echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.as
   libexpat1-dev \
   libglib2.0-dev \
   libgsf-1-dev \
-  libmimalloc3 \
+  libmimalloc3/testing \
   # libjpeg62-turbo-dev is just for building libvips; the final image uses jpegli (/usr/local/lib/libjpeg.so.62) built alongside libjxl
   libjpeg62-turbo-dev \
   liblcms2-dev \
