@@ -100,7 +100,7 @@ FROM base AS libraw
 COPY sources/libraw.json sources/libraw.sh ./
 RUN ./libraw.sh
 
-FROM libraw AS imagemagick
+FROM libraw AS libvips
 
 COPY --from=libheif /usr/local/lib/ /usr/local/lib/libheif/
 COPY --from=libheif /usr/local/include/libheif/ /usr/local/include/libheif/
@@ -113,11 +113,6 @@ COPY --from=libjxl /usr/local/include/jconfig.h /usr/local/include/jmorecfg.h /u
 RUN cp -r /usr/local/lib/libheif/libheif* /usr/local/lib/libjxl/libjxl* /usr/local/lib/libjxl/libjpeg* /usr/local/lib && \
   mv /usr/local/lib/libheif/pkgconfig/* /usr/local/lib/libjxl/pkgconfig/* /usr/local/lib/pkgconfig && \
   rm -r /usr/local/lib/libheif /usr/local/lib/libjxl
-
-COPY sources/imagemagick.json sources/imagemagick.sh ./
-RUN ./imagemagick.sh
-
-FROM imagemagick AS libvips
 
 COPY sources/libvips.json sources/libvips.sh ./
 RUN ./libvips.sh
