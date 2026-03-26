@@ -24,7 +24,7 @@ jobs:
     steps:
       - name: Check what should run
         id: check
-        uses: immich-app/devtools/actions/pre-job@eed0f8b8165ffcb951f2ba854b2dd031935e1d73 # pre-job-action-v2.0.2
+        uses: immich-app/devtools/actions/pre-job@f50e3b600b6ac1763ddb8f3dfc69093512b967a1 # pre-job-action-v2.0.3
         with:
           github-token: ${{ github.token }}
           filters: |
@@ -36,7 +36,7 @@ jobs:
 
   build_and_push:
     needs: pre-job
-    uses: immich-app/devtools/.github/workflows/multi-runner-build.yml@bd49ed7a5a6022149f79b6564df48177476a822b # multi-runner-build-workflow-2.2.1
+    uses: immich-app/devtools/.github/workflows/multi-runner-build.yml@61a0fc2b41524edcc7c9fffb8bb178e6b0ccf21d # multi-runner-build-workflow-2.3.0
     if: ${{ fromJSON(needs.pre-job.outputs.should_run).server == true }}
     strategy:
       fail-fast: true
