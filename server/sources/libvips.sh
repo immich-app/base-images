@@ -9,7 +9,6 @@ cd libvips
 git reset --hard "$LIBVIPS_REVISION"
 
 meson setup build --buildtype=release --libdir=lib -Dintrospection=disabled -Dtiff=disabled
-cd build
-ninja install
+meson install -C build
 cd .. && rm -rf libvips
 ldconfig /usr/local/lib
