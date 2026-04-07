@@ -1,5 +1,6 @@
 {
     "name": "libraw",
+    "repository": "LibRaw/LibRaw",
     "version": "0.22.0",
     "revision": "0b56545a4f828743f28a4345cdfdd4c49f9f9a2a"
 }
