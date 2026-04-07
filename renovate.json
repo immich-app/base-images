@@ -1,5 +1,18 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["local>immich-app/.github:renovate-config"],
-  "schedule": "on tuesday"
+  "schedule": "on tuesday",
+  "customManagers": [
+    {
+      "customType": "jsonata",
+      "description": "Update pinned source builds from GitHub",
+      "fileFormat": "json",
+      "managerFilePatterns": ["server/sources/*.json"],
+      "matchStrings": [
+        "{ \"depName\": repository, \"currentValue\": version, \"currentDigest\": revision }"
+      ],
+      "datasourceTemplate": "github-tags",
+      "extractVersionTemplate": "^v?(?<version>.+)$"
+    }
+  ]
 }
