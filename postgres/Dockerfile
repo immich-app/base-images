@@ -10,8 +10,10 @@ ARG TARGETARCH
 
 ENV DB_STORAGE_TYPE=SSD
 
+RUN python -m pip
+
 RUN apt-get update && \
-    apt-get install -y wget && \
+    apt-get install -y wget barman-cli-cloud && \
     wget -nv -O /tmp/vchord.deb https://github.com/tensorchord/VectorChord/releases/download/$VECTORCHORD_TAG/postgresql-${PG_MAJOR%.*}-vchord_${VECTORCHORD_TAG#"v"}-1_${TARGETARCH}.deb && \
     if [ -n "$PGVECTORS_TAG" ]; then \
         wget -nv -O /tmp/pgvectors.deb https://github.com/tensorchord/pgvecto.rs/releases/download/v$PGVECTORS_TAG/vectors-pg${PG_MAJOR%.*}_${PGVECTORS_TAG#"v"}_${TARGETARCH}$(if [ "$PGVECTORS_TAG" = '0.3.0' ]; then echo "_vectors"; fi).deb; \
