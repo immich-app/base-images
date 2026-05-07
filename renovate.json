@@ -2,6 +2,22 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["local>immich-app/.github:renovate-config"],
   "schedule": "on tuesday",
+  "customDatasources": {
+    "jellyfin-ffmpeg-trixie-amd64": {
+      "defaultRegistryUrlTemplate": "https://api.github.com/repos/jellyfin/jellyfin-ffmpeg/releases",
+      "format": "json",
+      "transformTemplates": [
+        "{ \"releases\": $map($[prerelease = false], function($r) { { \"version\": $replace($r.tag_name, /^v/, \"\"), \"releaseTimestamp\": $r.published_at, \"digest\": $map($filter($r.assets, function($a) { $contains($a.name, \"-trixie_amd64.deb\") and $type($a.digest) = \"string\" }), function($a) { $substringAfter($a.digest, \"sha256:\") })[0] } }) }"
+      ]
+    },
+    "jellyfin-ffmpeg-trixie-arm64": {
+      "defaultRegistryUrlTemplate": "https://api.github.com/repos/jellyfin/jellyfin-ffmpeg/releases",
+      "format": "json",
+      "transformTemplates": [
+        "{ \"releases\": $map($[prerelease = false], function($r) { { \"version\": $replace($r.tag_name, /^v/, \"\"), \"releaseTimestamp\": $r.published_at, \"digest\": $map($filter($r.assets, function($a) { $contains($a.name, \"-trixie_arm64.deb\") and $type($a.digest) = \"string\" }), function($a) { $substringAfter($a.digest, \"sha256:\") })[0] } }) }"
+      ]
+    }
+  },
   "customManagers": [
     {
       "customType": "jsonata",
@@ -13,6 +29,24 @@
       ],
       "datasourceTemplate": "github-tags",
       "extractVersionTemplate": "^v?(?<version>.+)$"
+    },
+    {
+      "customType": "jsonata",
+      "description": "Update pinned ffmpeg packages from GitHub releases",
+      "fileFormat": "json",
+      "managerFilePatterns": ["server/packages/ffmpeg.json"],
+      "matchStrings": [
+        "{ \"depName\": repository & \":amd64\", \"packageName\": repository, \"currentValue\": version, \"currentDigest\": sha256.amd64, \"datasource\": \"custom.jellyfin-ffmpeg-trixie-amd64\" }",
+        "{ \"depName\": repository & \":arm64\", \"packageName\": repository, \"currentValue\": version, \"currentDigest\": sha256.arm64, \"datasource\": \"custom.jellyfin-ffmpeg-trixie-arm64\" }"
+      ]
+    }
+  ],
+  "packageRules": [
+    {
+      "matchDepNames": ["jellyfin/jellyfin-ffmpeg:amd64", "jellyfin/jellyfin-ffmpeg:arm64"],
+      "groupName": "jellyfin-ffmpeg",
+      "versioning": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)-(?<prerelease>\\d+)$",
+      "ignoreUnstable": false
     }
   ]
 }
