@@ -122,6 +122,11 @@ FROM imagemagick AS libvips
 COPY sources/libvips.json sources/libvips.sh ./
 RUN ./libvips.sh
 
+FROM base AS restic
+
+COPY sources/restic.json sources/restic.sh ./
+RUN ./restic.sh
+
 FROM base AS dev
 
 ARG DEBIAN_RELEASE
@@ -232,6 +237,7 @@ RUN echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.as
 
 COPY --from=dev /usr/local/lib/ /usr/local/lib/
 COPY --from=dev /build/ /build/
+COPY --from=restic /usr/local/bin/restic /usr/local/bin/restic
 
 WORKDIR /usr/src/app
 
