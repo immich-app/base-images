@@ -1,6 +1,6 @@
 {
     "name": "libheif",
     "repository": "strukturag/libheif",
-    "version": "1.21.2",
-    "revision": "62f1b8c76ed4d8305071fdacbe74ef9717bacac5"
+    "version": "1.23.0",
+    "revision": "bd114ed6d592adc92a09882172ab71d1b4c6e1b1"
 }
