@@ -2,12 +2,5 @@
     "name": "restic",
     "repository": "restic/restic",
     "version": "0.18.1",
-    "revision": "7d0aa7f2e30546fba7c8f1c0bae4d6704e3d8423",
-    "go": {
-        "version": "1.26.4",
-        "sha256": {
-            "amd64": "1153d3d50e0ac764b447adfe05c2bcf08e889d42a02e0fe0259bd47f6733ad7f",
-            "arm64": "ef758ae7c6cf9267c9c0ef080b8965f453d89ab2d25d9eb22de4405925238768"
-        }
-    }
+    "revision": "7d0aa7f2e30546fba7c8f1c0bae4d6704e3d8423"
 }

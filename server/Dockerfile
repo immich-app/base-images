@@ -122,10 +122,12 @@ FROM imagemagick AS libvips
 COPY sources/libvips.json sources/libvips.sh ./
 RUN ./libvips.sh
 
-FROM base AS restic
+FROM golang:1.26.4-${DEBIAN_RELEASE}@sha256:0dcba0d95dbfb072e9917a106b9e07d7cc298097dc83e9307056ef1889de654d AS restic
 
 COPY sources/restic.json sources/restic.sh ./
-RUN ./restic.sh
+RUN apt-get update && \
+  apt-get install --no-install-recommends -yqq jq && \
+  ./restic.sh
 
 FROM base AS dev
 
