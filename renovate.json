@@ -2,6 +2,26 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["local>immich-app/.github:renovate-config"],
   "schedule": "on tuesday",
+  "packageRules": [
+    {
+      "description": "Intel IGC ships the build number only in the .deb asset name (e.g. 2.34.4+21428)",
+      "matchDatasources": ["custom.intel-igc"],
+      "versioning": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)\\+(?<build>\\d+)$"
+    },
+    {
+      "description": "compute-runtime .deb carries a debian revision suffix (e.g. 26.18.38308.1-0)",
+      "matchDatasources": ["custom.intel-opencl-icd"],
+      "versioning": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)\\.(?<build>\\d+)-(?<revision>\\d+)$"
+    },
+    {
+      "matchDatasources": ["custom.intel-gmmlib"],
+      "versioning": "loose"
+    },
+    {
+      "groupName": "intel-gpu-drivers",
+      "matchDepNames": ["intel/intel-graphics-compiler", "intel/compute-runtime"]
+    }
+  ],
   "customManagers": [
     {
       "customType": "jsonata",
@@ -14,5 +34,28 @@
       "datasourceTemplate": "github-tags",
       "extractVersionTemplate": "^v?(?<version>.+)$"
     }
-  ]
+  ],
+  "customDatasources": {
+    "intel-igc": {
+      "defaultRegistryUrlTemplate": "https://api.github.com/repos/{{packageName}}/releases?per_page=100",
+      "format": "json",
+      "transformTemplates": [
+        "{ \"releases\": $map($[assets[$contains(name, \"intel-igc-core-2_\")]], function($r){ { \"version\": $substringBefore($substringAfter($r.assets[$contains(name, \"intel-igc-core-2_\")][0].name, \"intel-igc-core-2_\"), \"_amd64.deb\"), \"releaseTimestamp\": $r.published_at } }), \"sourceUrl\": \"https://github.com/intel/intel-graphics-compiler\" }"
+      ]
+    },
+    "intel-opencl-icd": {
+      "defaultRegistryUrlTemplate": "https://api.github.com/repos/{{packageName}}/releases?per_page=100",
+      "format": "json",
+      "transformTemplates": [
+        "{ \"releases\": $map($[assets[$contains(name, \"intel-opencl-icd_\")]], function($r){ { \"version\": $substringBefore($substringAfter($r.assets[$contains(name, \"intel-opencl-icd_\")][0].name, \"intel-opencl-icd_\"), \"_amd64.deb\"), \"releaseTimestamp\": $r.published_at } }), \"sourceUrl\": \"https://github.com/intel/compute-runtime\" }"
+      ]
+    },
+    "intel-gmmlib": {
+      "defaultRegistryUrlTemplate": "https://api.github.com/repos/{{packageName}}/releases?per_page=100",
+      "format": "json",
+      "transformTemplates": [
+        "{ \"releases\": $map($[assets[$contains(name, \"libigdgmm12_\")]], function($r){ { \"version\": $substringBefore($substringAfter($r.assets[$contains(name, \"libigdgmm12_\")][0].name, \"libigdgmm12_\"), \"_amd64.deb\"), \"releaseTimestamp\": $r.published_at } }), \"sourceUrl\": \"https://github.com/intel/compute-runtime\" }"
+      ]
+    }
+  }
 }
