@@ -2,6 +2,26 @@
 
 set -eo pipefail
 
+fsdir="$PGDATA"
+until [[ -d "$fsdir" ]]; do fsdir=$(dirname "$fsdir"); done
+fstype=$(stat -f -c %T "$fsdir")
+
+case "$fstype" in
+  ext2/ext3|ext4|xfs|btrfs|zfs|f2fs|tmpfs) ;;
+  *)
+    if [[ "${IGNORE_DATABASE_FSTYPE,,}" != "true" ]]; then
+      cat >&2 <<EOF
+ERROR: PGDATA is on '$fstype', which is not safe for a PostgreSQL database.
+Network shares (NFS/SMB), Windows drives, and VM shared folders will corrupt your data.
+Point PGDATA at local Linux storage or use a named container volume.
+To bypass at your own risk, set IGNORE_DATABASE_FSTYPE=true.
+EOF
+      exit 1
+    fi
+    echo "WARNING: proceeding on unsafe filesystem '$fstype'" >&2
+    ;;
+esac
+
 : "${DB_STORAGE_TYPE:=SSD}"
 
 case "${DB_STORAGE_TYPE^^}" in
