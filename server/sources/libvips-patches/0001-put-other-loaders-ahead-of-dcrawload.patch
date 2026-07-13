@@ -1,0 +1,49 @@
+From 1ebe993965cccb646cc7dbc59e23a1064a115bb5 Mon Sep 17 00:00:00 2001
+From: mertalev <101130780+mertalev@users.noreply.github.com>
+Date: Mon, 13 Jul 2026 16:00:14 -0400
+Subject: [PATCH] put other loaders ahead of dcrawload
+
+---
+ libvips/foreign/heifload.c | 5 +++++
+ libvips/foreign/jpegload.c | 2 +-
+ 2 files changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/libvips/foreign/heifload.c b/libvips/foreign/heifload.c
+index ce5582baf..e15a76f36 100644
+--- a/libvips/foreign/heifload.c
++++ b/libvips/foreign/heifload.c
+@@ -1105,6 +1105,7 @@ vips_foreign_load_heif_class_init(VipsForeignLoadHeifClass *class)
+ {
+ 	GObjectClass *gobject_class = G_OBJECT_CLASS(class);
+ 	VipsObjectClass *object_class = (VipsObjectClass *) class;
++	VipsForeignClass *foreign_class = (VipsForeignClass *) class;
+ 	VipsForeignLoadClass *load_class = (VipsForeignLoadClass *) class;
+ 
+ 	vips__heif_init();
+@@ -1117,6 +1118,10 @@ vips_foreign_load_heif_class_init(VipsForeignLoadHeifClass *class)
+ 	object_class->description = _("load a HEIF image");
+ 	object_class->build = vips_foreign_load_heif_build;
+ 
++	/* Our is_a() is a cheap ISOBMFF brand check, so high priority.
++	 */
++	foreign_class->priority = 150;
++
+ 	load_class->get_flags = vips_foreign_load_heif_get_flags;
+ 	load_class->header = vips_foreign_load_heif_header;
+ 	load_class->load = vips_foreign_load_heif_load;
+diff --git a/libvips/foreign/jpegload.c b/libvips/foreign/jpegload.c
+index a4f598113..09e6a22be 100644
+--- a/libvips/foreign/jpegload.c
++++ b/libvips/foreign/jpegload.c
+@@ -177,7 +177,7 @@ vips_foreign_load_jpeg_class_init(VipsForeignLoadJpegClass *class)
+ 
+ 	/* We are fast at is_a(), so high priority.
+ 	 */
+-	foreign_class->priority = 50;
++	foreign_class->priority = 150;
+ 
+ 	load_class->get_flags_filename = vips_foreign_load_jpeg_get_flags_filename;
+ 	load_class->get_flags = vips_foreign_load_jpeg_get_flags;
+-- 
+2.43.0
+

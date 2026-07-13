@@ -120,6 +120,7 @@ RUN ./imagemagick.sh
 FROM imagemagick AS libvips
 
 COPY sources/libvips.json sources/libvips.sh ./
+COPY sources/libvips-patches/ ./libvips-patches/
 RUN ./libvips.sh
 
 FROM base AS dev
