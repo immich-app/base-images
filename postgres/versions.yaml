@@ -5,6 +5,8 @@ pg:
   - "17"
   - "18"
 vectorchord:
+  # renovate: datasource=github-releases depName=tensorchord/VectorChord
   - "1.1.1"
 pgvector:
+  # renovate: datasource=github-releases depName=pgvector/pgvector
   - "0.8.5"

@@ -20,6 +20,10 @@
     {
       "groupName": "intel-gpu-drivers",
       "matchDepNames": ["intel/intel-graphics-compiler", "intel/compute-runtime"]
+    },
+    {
+      "matchPackageNames": ["pgvector/pgvector"],
+      "extractVersion": "^v(?<version>.+)$"
     }
   ],
   "customManagers": [
