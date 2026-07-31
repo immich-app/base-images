@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
-export DEBIAN_RELEASE=${DEBIAN_RELEASE:=trixie}
 set -e
+
+# shellcheck source=/dev/null
+. /etc/os-release
 
 sed -i -e's/ main/ main contrib non-free non-free-firmware/g' /etc/apt/sources.list.d/debian.sources
 
@@ -8,7 +10,7 @@ sed -i -e's/ main/ main contrib non-free non-free-firmware/g' /etc/apt/sources.l
 # due to the time64 migration. Trixie rebuilt all packages with a 64 bit time_t, but not all
 # packages in unstable have migrated yet. The 64 bit time version has t64 suffix in the package name.
 # More info: https://lwn.net/Articles/938149/ https://wiki.debian.org/ReleaseGoals/64bit-time
-sed -i -e"s/ ${DEBIAN_RELEASE}-updates/ ${DEBIAN_RELEASE}-updates testing/g" /etc/apt/sources.list.d/debian.sources
+sed -i -e"s/ ${VERSION_CODENAME}-updates/ ${VERSION_CODENAME}-updates testing/g" /etc/apt/sources.list.d/debian.sources
 
 # # default priority is 500, so we set unstable to 450 to prefer stable packages
 cat > /etc/apt/preferences.d/preferences << EOL

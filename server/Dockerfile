@@ -1,9 +1,5 @@
-ARG DEBIAN_RELEASE=trixie
-
-FROM node:24.14.1-${DEBIAN_RELEASE}-slim@sha256:9707cd4542f400df5078df04f9652a272429112f15202d22b5b8bdd148df494f AS base
+FROM node:24.14.1-trixie-slim@sha256:9707cd4542f400df5078df04f9652a272429112f15202d22b5b8bdd148df494f AS base
 ARG DEBIAN_FRONTEND=noninteractive
-ARG DEBIAN_RELEASE
-ENV DEBIAN_RELEASE=${DEBIAN_RELEASE}
 
 WORKDIR /usr/src/app
 
@@ -20,7 +16,8 @@ RUN ./configure-apt.sh && \
 
 ADD --chmod=644 https://www.postgresql.org/media/keys/ACCC4CF8.asc /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc
 
-RUN echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt ${DEBIAN_RELEASE}-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
+RUN . /etc/os-release && \
+  echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt ${VERSION_CODENAME}-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
   apt-get update && \
   apt-get install --no-install-recommends -yqq \
   git \
@@ -126,9 +123,6 @@ RUN ./libvips.sh
 
 FROM base AS dev
 
-ARG DEBIAN_RELEASE
-ENV DEBIAN_RELEASE=${DEBIAN_RELEASE}
-
 COPY packages/ffmpeg.json packages/ffmpeg.sh ./
 RUN ./ffmpeg.sh
 
@@ -153,10 +147,8 @@ RUN jq -n \
   '{sources: $sources[0], packages: $packages[0]}' \
   > /build/build-lock.json
 
-FROM node:24.14.1-${DEBIAN_RELEASE}-slim@sha256:9707cd4542f400df5078df04f9652a272429112f15202d22b5b8bdd148df494f AS prod
+FROM node:24.14.1-trixie-slim@sha256:9707cd4542f400df5078df04f9652a272429112f15202d22b5b8bdd148df494f AS prod
 ARG DEBIAN_FRONTEND=noninteractive
-ARG DEBIAN_RELEASE
-ENV DEBIAN_RELEASE=${DEBIAN_RELEASE}
 
 # renovate: datasource=custom.intel-igc depName=intel/intel-graphics-compiler
 ARG IGC_VERSION=2.34.4+21428
@@ -176,7 +168,8 @@ RUN ./configure-apt.sh && \
 
 ADD --chmod=644 https://www.postgresql.org/media/keys/ACCC4CF8.asc /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc
 
-RUN echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt ${DEBIAN_RELEASE}-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
+RUN . /etc/os-release && \
+  echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt ${VERSION_CODENAME}-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
   apt-get update && \
   apt-get install --no-install-recommends -yqq \
   jq \
