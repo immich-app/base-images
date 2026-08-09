@@ -36,7 +36,7 @@ jobs:
 
   build_and_push:
     needs: pre-job
-    uses: immich-app/devtools/.github/workflows/multi-runner-build.yml@50dc3a14f0606ecd8fc28d78d3a3c655115ab695 # multi-runner-build-workflow-v3.1.0
+    uses: immich-app/devtools/.github/workflows/multi-runner-build.yml@4d420cf8e5ea499f99b2c2849ff9a219d5f7b178 # multi-runner-build-workflow-v4.0.0
     if: ${{ fromJSON(needs.pre-job.outputs.should_run).server == true }}
     strategy:
       fail-fast: true
@@ -51,7 +51,11 @@ jobs:
       context: server
       dockerfile: server/Dockerfile
       target: ${{ matrix.target }}
-      release-tag-type: git-tag
+      tags: |
+        type=ref,event=branch
+        type=ref,event=pr
+        type=sha,format=long,prefix=commit-
+        type=ref,event=tag
 
   success-check:
     needs: build_and_push
