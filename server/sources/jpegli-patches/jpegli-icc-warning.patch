@@ -1,8 +1,8 @@
 diff --git a/lib/jpegli/decode_marker.cc b/lib/jpegli/decode_marker.cc
-index 2621ed08..33cbb8be 100644
+index eb42a97..790147b 100644
 --- a/lib/jpegli/decode_marker.cc
 +++ b/lib/jpegli/decode_marker.cc
-@@ -408,24 +408,29 @@ void ProcessAPP(j_decompress_ptr cinfo, const uint8_t* data, size_t len) {
+@@ -411,24 +411,29 @@ void ProcessAPP(j_decompress_ptr cinfo, const uint8_t* data, size_t len) {
        payload += sizeof(kIccProfileTag);
        payload_size -= sizeof(kIccProfileTag);
        if (payload_size < 2) {

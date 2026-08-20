@@ -29,14 +29,24 @@
   "customManagers": [
     {
       "customType": "jsonata",
-      "description": "Update pinned source builds from GitHub",
+      "description": "Update pinned source builds from GitHub tags",
       "fileFormat": "json",
       "managerFilePatterns": ["server/sources/*.json"],
       "matchStrings": [
-        "{ \"depName\": repository, \"currentValue\": version, \"currentDigest\": revision }"
+        "$not($exists(branch)) ? { \"depName\": repository, \"currentValue\": version, \"currentDigest\": revision }"
       ],
       "datasourceTemplate": "github-tags",
       "extractVersionTemplate": "^v?(?<version>.+)$"
+    },
+    {
+      "customType": "jsonata",
+      "description": "Sources with no tags or releases track their branch HEAD by digest",
+      "fileFormat": "json",
+      "managerFilePatterns": ["server/sources/*.json"],
+      "matchStrings": [
+        "$exists(branch) ? { \"depName\": repository, \"packageName\": \"https://github.com/\" & repository, \"currentValue\": branch, \"currentDigest\": revision }"
+      ],
+      "datasourceTemplate": "git-refs"
     }
   ],
   "customDatasources": {

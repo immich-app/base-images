@@ -36,7 +36,7 @@ RUN . /etc/os-release && \
   libglib2.0-dev \
   libgsf-1-dev \
   libmimalloc3 \
-  # libjpeg62-turbo-dev is just for building libvips; the final image uses jpegli (/usr/local/lib/libjpeg.so.62) built alongside libjxl
+  # libjpeg62-turbo-dev is just for building libvips; the final image uses jpegli (/usr/local/lib/libjpeg.so.62)
   libjpeg62-turbo-dev \
   liblcms2-dev \
   librsvg2-dev \
@@ -82,6 +82,12 @@ ADD --chmod=444 https://raw.githubusercontent.com/nvkelso/natural-earth-vector/v
 RUN umask 0333 && unzip /build/geodata/cities500.zip -d /build/geodata/ && \
   rm /build/geodata/cities500.zip && date --iso-8601=seconds | tr -d "\n" > /build/geodata/geodata-date.txt
 
+FROM base AS jpegli
+
+COPY sources/jpegli.json sources/jpegli.sh ./
+COPY sources/jpegli-patches/ ./jpegli-patches/
+RUN ./jpegli.sh
+
 FROM base AS libheif
 
 COPY sources/libheif.json sources/libheif.sh ./
@@ -90,7 +96,6 @@ RUN ./libheif.sh
 FROM base AS libjxl
 
 COPY sources/libjxl.json sources/libjxl.sh ./
-COPY sources/libjxl-patches/ ./libjxl-patches/
 RUN ./libjxl.sh
 
 FROM base AS libraw
@@ -105,12 +110,14 @@ COPY --from=libheif /usr/local/include/libheif/ /usr/local/include/libheif/
 
 COPY --from=libjxl /usr/local/lib/ /usr/local/lib/libjxl/
 COPY --from=libjxl /usr/local/include/jxl/ /usr/local/include/jxl/
-COPY --from=libjxl /usr/local/include/jconfig.h /usr/local/include/jmorecfg.h /usr/local/include/jpeglib.h /usr/local/include/
 
-# COPY resolves symlinks unless copying the enclosing folder, so this is a workaround to get the correct result
-RUN cp -r /usr/local/lib/libheif/libheif* /usr/local/lib/libjxl/libjxl* /usr/local/lib/libjxl/libjpeg* /usr/local/lib && \
+COPY --from=jpegli /usr/local/lib/ /usr/local/lib/jpegli/
+COPY --from=jpegli /usr/local/include/jconfig.h /usr/local/include/jmorecfg.h /usr/local/include/jpeglib.h /usr/local/include/
+
+# COPY resolves symlinks unless copying the enclosing folder, so this is a workaround to get the correct result.
+RUN cp -r /usr/local/lib/libheif/libheif* /usr/local/lib/libjxl/libjxl* /usr/local/lib/jpegli/libjpeg.so* /usr/local/lib && \
   mv /usr/local/lib/libheif/pkgconfig/* /usr/local/lib/libjxl/pkgconfig/* /usr/local/lib/pkgconfig && \
-  rm -r /usr/local/lib/libheif /usr/local/lib/libjxl
+  rm -r /usr/local/lib/libheif /usr/local/lib/libjxl /usr/local/lib/jpegli
 
 COPY sources/imagemagick.json sources/imagemagick.sh ./
 RUN ./imagemagick.sh
