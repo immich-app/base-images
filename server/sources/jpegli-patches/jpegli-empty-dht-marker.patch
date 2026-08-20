@@ -1,13 +1,43 @@
+diff --git a/lib/jpegli/bitstream.cc b/lib/jpegli/bitstream.cc
+index 6deb5a39..80039994 100644
+--- a/lib/jpegli/bitstream.cc
++++ b/lib/jpegli/bitstream.cc
+@@ -192,10 +192,12 @@ void EncodeDHT(j_compress_ptr cinfo, size_t offset, size_t num) {
+   for (size_t i = 0; i < num; ++i) {
+     const JHUFF_TBL& table = m->huffman_tables[offset + i];
+     if (table.sent_table) continue;
+-    marker_len += kJpegHuffmanMaxBitLength + 1;
+     for (size_t j = 0; j <= kJpegHuffmanMaxBitLength; ++j) {
+       marker_len += table.bits[j];
+     }
++    // Special case: empty DHT marker
++    if (marker_len == 2) break;
++    marker_len += kJpegHuffmanMaxBitLength + 1;
+   }
+   std::vector<uint8_t> data(marker_len + 2);
+   size_t pos = 0;
+@@ -210,6 +212,8 @@ void EncodeDHT(j_compress_ptr cinfo, size_t offset, size_t num) {
+     for (size_t i = 0; i <= kJpegHuffmanMaxBitLength; ++i) {
+       total_count += table.bits[i];
+     }
++    // Empty DHT marker
++    if (total_count == 0) break;
+     data[pos++] = m->slot_id_map[offset + t];
+     for (size_t i = 1; i <= kJpegHuffmanMaxBitLength; ++i) {
+       data[pos++] = table.bits[i];
 diff --git a/lib/jpegli/decode_marker.cc b/lib/jpegli/decode_marker.cc
-index eb42a97..b19e5b3 100644
+index eb42a97f..9e0518d3 100644
 --- a/lib/jpegli/decode_marker.cc
 +++ b/lib/jpegli/decode_marker.cc
-@@ -285,7 +285,7 @@ void ProcessSOS(j_decompress_ptr cinfo, const uint8_t* data, size_t len) {
+@@ -284,9 +284,8 @@ void ProcessSOS(j_decompress_ptr cinfo, const uint8_t* data, size_t len) {
+ // and solt_id of Huffman code being read.
  void ProcessDHT(j_decompress_ptr cinfo, const uint8_t* data, size_t len) {
    size_t pos = 2;
-   if (pos == len) {
+-  if (pos == len) {
 -    JPEGLI_ERROR("DHT marker: no Huffman table found");
-+    return;
-   }
+-  }
++  // Empty DHT marker. Useless but does seem to occur in the wild.
++  if (pos == len) return;
    while (pos < len) {
      JPEG_VERIFY_LEN(1 + kJpegHuffmanMaxBitLength);
+     // The index of the Huffman code in the current set of Huffman codes. For AC
