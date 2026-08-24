@@ -140,7 +140,7 @@ COPY --from=libvips /usr/local/bin/vips* /usr/local/bin/
 COPY --from=libvips /usr/local/include/vips/ /usr/local/include/vips/
 COPY --from=geodata /build/geodata /build/geodata
 
-ENV LD_LIBRARY_PATH=/usr/lib/jellyfin-ffmpeg/lib:/usr/lib/wsl/lib:$LD_LIBRARY_PATH
+ENV LD_LIBRARY_PATH=/usr/lib/wsl/lib
 
 RUN ldconfig /usr/local/lib
 
@@ -194,9 +194,6 @@ RUN . /etc/os-release && \
   libopenjp2-7 \
   librsvg2-2 \
   libspng0 \
-  mesa-utils \
-  mesa-va-drivers \
-  mesa-vulkan-drivers \
   tini \
   wget \
   zlib1g \
@@ -226,8 +223,13 @@ RUN . /etc/os-release && \
   wget "https://github.com/intel/compute-runtime/releases/download/${CR_TAG}/intel-opencl-icd_${COMPUTE_RUNTIME_VERSION}_amd64.deb" &&  \
   # Shared libigdgmm1
   wget -nv "https://github.com/intel/compute-runtime/releases/download/${CR_TAG}/libigdgmm12_${GMMLIB_VERSION}_amd64.deb" && \
-  dpkg -i *.deb; \
+  dpkg -i *.deb && \
+  # intel-igc-opencl ships libopencl-clang.so and .so.14 as two identical files
+  ln -sf libopencl-clang.so.14 /usr/local/lib/libopencl-clang.so; \
   fi && \
+  # use shared libraries
+  (cd /usr/lib/jellyfin-ffmpeg/lib && \
+  rm -f libdav1d.so* libfontconfig.so* libfreetype.so* libfribidi.so* libharfbuzz.so* libigdgmm.so* libz.so*) && \
   apt-get install -t testing --no-install-recommends -yqq libmimalloc3 && \
   apt-get remove -yqq jq wget ca-certificates && \
   apt-get autoremove -yqq && \
@@ -246,6 +248,8 @@ COPY --from=dev /build/ /build/
 
 WORKDIR /usr/src/app
 
-ENV LD_LIBRARY_PATH=/usr/lib/jellyfin-ffmpeg/lib:/usr/lib/wsl/lib
+ENV LD_LIBRARY_PATH=/usr/lib/wsl/lib \
+  # jellyfin-ffmpeg keeps its Vulkan ICD manifests outside the loader's default search path
+  XDG_DATA_DIRS=/usr/lib/jellyfin-ffmpeg/share:/usr/local/share:/usr/share
 
 RUN ldconfig /usr/local/lib
