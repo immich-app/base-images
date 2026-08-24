@@ -140,7 +140,10 @@ COPY --from=libvips /usr/local/bin/vips* /usr/local/bin/
 COPY --from=libvips /usr/local/include/vips/ /usr/local/include/vips/
 COPY --from=geodata /build/geodata /build/geodata
 
-ENV LD_LIBRARY_PATH=/usr/lib/jellyfin-ffmpeg/lib:/usr/lib/wsl/lib:$LD_LIBRARY_PATH
+# jellyfin-ffmpeg's libraries are deliberately NOT on LD_LIBRARY_PATH: its binaries
+# find them through the RUNPATH they carry, and exposing the directory to every
+# process makes its bundled libxml2.so.16 shadow the system libxml2 for librsvg.
+ENV LD_LIBRARY_PATH=/usr/lib/wsl/lib:$LD_LIBRARY_PATH
 
 RUN ldconfig /usr/local/lib
 
@@ -246,6 +249,9 @@ COPY --from=dev /build/ /build/
 
 WORKDIR /usr/src/app
 
-ENV LD_LIBRARY_PATH=/usr/lib/jellyfin-ffmpeg/lib:/usr/lib/wsl/lib
+# See the note in the dev stage: adding /usr/lib/jellyfin-ffmpeg/lib here makes
+# librsvg bind against jellyfin's libxml2 2.16 instead of the system 2.9.14 it was
+# built for, which segfaults libvips whenever it renders an SVG.
+ENV LD_LIBRARY_PATH=/usr/lib/wsl/lib
 
 RUN ldconfig /usr/local/lib
