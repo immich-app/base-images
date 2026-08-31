@@ -10,3 +10,6 @@ vectorchord:
 pgvector:
   # renovate: datasource=github-releases depName=pgvector/pgvector
   - "0.8.5"
+codename:
+  - "bookworm"
+  - "trixie"

@@ -132,6 +132,7 @@ jobs:
           flavor: |
             # Disable latest tag
             latest=false
+            suffix=${{ matrix.codename != 'bookworm' && format('-{0}', matrix.codename) || '' }}
           images: |
             name=ghcr.io/${{ github.repository_owner }}/postgres
           tags: |
@@ -155,6 +156,7 @@ jobs:
             VECTORCHORD_TAG=${{ matrix.vectorchord }}
             PGVECTORS_TAG=${{ matrix.pgvectors }}
             PGVECTOR_TAG=${{ matrix.pgvector }}
+            DEBIAN_CODENAME=${{ matrix.codename }}
 
   results:
       if: ${{ always() }}
