@@ -23,7 +23,7 @@ jobs:
     steps:
       - name: Check what should run
         id: check
-        uses: immich-app/devtools/actions/pre-job@03514eceb4a27cd714976a866b350df5ce175720 # pre-job-action-v2.1.0
+        uses: immich-app/devtools/actions/pre-job@75493d49052d536863fc96100086782c5279b145 # pre-job-action-v2.1.1
         with:
           github-token: ${{ github.token }}
           filters: |
@@ -46,7 +46,7 @@ jobs:
 
         - id: get-versions
           name: Get dependency versions
-          uses: mikefarah/yq@1b9b4ac5187171d2e5e3129be0cfa827c7f9d53d # v4.53.3
+          uses: mikefarah/yq@c14f446382944492701b16c1ddb48bb9dbe683e3 # v4.53.6
           with:
             cmd: yq eval -o=json -I=0 postgres/versions.yaml
 
@@ -69,7 +69,7 @@ jobs:
         uses: docker/setup-qemu-action@96fe6ef7f33517b61c61be40b68a1882f3264fb8 # v4.2.0
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@bb05f3f5519dd87d3ba754cc423b652a5edd6d2c # v4.2.0
+        uses: docker/setup-buildx-action@37fe631027851001ddb9b187196cc803df7f5f0e # v4.3.0
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
