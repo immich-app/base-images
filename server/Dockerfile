@@ -8,15 +8,15 @@ ENV LD_LIBRARY_PATH=/usr/local/lib \
 
 COPY configure-apt.sh ./
 
+RUN mkdir -p /usr/share/postgresql-common/pgdg
+
+ADD --chmod=644 https://www.postgresql.org/media/keys/ACCC4CF8.asc /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc
+
 # Install ca-certificates first, then setup PostgreSQL repository
 RUN ./configure-apt.sh && \
   apt-get update && \
   apt-get install --no-install-recommends -yqq ca-certificates && \
-  mkdir -p /usr/share/postgresql-common/pgdg
-
-ADD --chmod=644 https://www.postgresql.org/media/keys/ACCC4CF8.asc /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc
-
-RUN . /etc/os-release && \
+  . /etc/os-release && \
   echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt ${VERSION_CODENAME}-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
   apt-get update && \
   apt-get install --no-install-recommends -yqq \
@@ -69,7 +69,8 @@ RUN . /etc/os-release && \
   libhwy-dev \
   libwebp-dev \
   libio-compress-brotli-perl \
-  libaom-dev
+  libaom-dev && \
+  rm -rf /var/lib/apt/lists
 
 FROM base AS geodata
 
@@ -131,7 +132,9 @@ RUN ./libvips.sh
 FROM base AS dev
 
 COPY packages/ffmpeg.json packages/ffmpeg.sh ./
-RUN ./ffmpeg.sh
+RUN apt-get update && \
+  ./ffmpeg.sh && \
+  rm -rf /var/lib/apt/lists
 
 COPY --from=base /usr/bin/tini /usr/bin/tini
 COPY --from=base /usr/bin/make /usr/bin/make
@@ -168,14 +171,14 @@ WORKDIR /build
 
 COPY configure-apt.sh packages/ffmpeg.json packages/ffmpeg.sh ./
 
-RUN ./configure-apt.sh && \
-  apt-get update && \
-  apt-get install curl ca-certificates --no-install-recommends -yqq && \
-  mkdir -p /usr/share/postgresql-common/pgdg
+RUN mkdir -p /usr/share/postgresql-common/pgdg
 
 ADD --chmod=644 https://www.postgresql.org/media/keys/ACCC4CF8.asc /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc
 
-RUN . /etc/os-release && \
+RUN ./configure-apt.sh && \
+  apt-get update && \
+  apt-get install ca-certificates --no-install-recommends -yqq && \
+  . /etc/os-release && \
   echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt ${VERSION_CODENAME}-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
   apt-get update && \
   apt-get install --no-install-recommends -yqq \
