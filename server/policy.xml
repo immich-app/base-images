@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE policymap [
+<!ELEMENT policymap (policy)*>
+<!ATTLIST policymap xmlns CDATA #FIXED "">
+<!ELEMENT policy EMPTY>
+<!ATTLIST policy xmlns CDATA #FIXED "">
+<!ATTLIST policy domain NMTOKEN #REQUIRED>
+<!ATTLIST policy name NMTOKEN #IMPLIED>
+<!ATTLIST policy pattern CDATA #IMPLIED>
+<!ATTLIST policy rights NMTOKEN #IMPLIED>
+<!ATTLIST policy stealth NMTOKEN #IMPLIED>
+<!ATTLIST policy value CDATA #IMPLIED>
+]>
+<policymap>
+  <policy domain="delegate" rights="none" pattern="*"/>
+  <policy domain="filter" rights="none" pattern="*"/>
+  <policy domain="coder" rights="none" pattern="MSL"/>
+  <policy domain="module" rights="none" pattern="MSL"/>
+  <policy domain="coder" rights="none" pattern="MVG"/>
+  <policy domain="module" rights="none" pattern="MVG"/>
+  <policy domain="coder" rights="none" pattern="URL"/>
+  <policy domain="module" rights="none" pattern="URL"/>
+  <policy domain="coder" rights="none" pattern="HTTP"/>
+  <policy domain="module" rights="none" pattern="HTTP"/>
+  <policy domain="coder" rights="none" pattern="HTTPS"/>
+  <policy domain="module" rights="none" pattern="HTTPS"/>
+  <policy domain="coder" rights="none" pattern="FTP"/>
+  <policy domain="module" rights="none" pattern="FTP"/>
+  <policy domain="coder" rights="none" pattern="EPHEMERAL"/>
+  <policy domain="module" rights="none" pattern="EPHEMERAL"/>
+  <policy domain="coder" rights="none" pattern="TEXT"/>
+  <policy domain="module" rights="none" pattern="TEXT"/>
+  <policy domain="coder" rights="none" pattern="LABEL"/>
+  <policy domain="module" rights="none" pattern="LABEL"/>
+  <policy domain="path" rights="none" pattern="-"/>
+  <policy domain="path" rights="none" pattern="fd:*"/>
+  <policy domain="path" rights="none" pattern="@*"/>
+  <policy domain="path" rights="none" pattern="*../*"/>
+  <policy domain="system" name="symlink" rights="none" pattern="follow"/>
+</policymap>

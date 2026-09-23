@@ -249,10 +249,13 @@ RUN ./configure-apt.sh && \
 COPY --from=dev /usr/local/lib/ /usr/local/lib/
 COPY --from=dev /build/ /build/
 
+COPY policy.xml /etc/ImageMagick/policy.xml
+
 WORKDIR /usr/src/app
 
 ENV LD_LIBRARY_PATH=/usr/lib/wsl/lib \
   # jellyfin-ffmpeg keeps its Vulkan ICD manifests outside the loader's default search path
-  XDG_DATA_DIRS=/usr/lib/jellyfin-ffmpeg/share:/usr/local/share:/usr/share
+  XDG_DATA_DIRS=/usr/lib/jellyfin-ffmpeg/share:/usr/local/share:/usr/share \
+  MAGICK_CONFIGURE_PATH=/etc/ImageMagick
 
 RUN ldconfig /usr/local/lib
