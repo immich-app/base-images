@@ -177,7 +177,7 @@ ADD --chmod=644 https://www.postgresql.org/media/keys/ACCC4CF8.asc /usr/share/po
 
 RUN ./configure-apt.sh && \
   apt-get update && \
-  apt-get install ca-certificates --no-install-recommends -yqq && \
+  apt-get install curl ca-certificates --no-install-recommends -yqq && \
   . /etc/os-release && \
   echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt ${VERSION_CODENAME}-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
   apt-get update && \
