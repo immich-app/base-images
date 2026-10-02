@@ -1,18 +1,36 @@
-From 1ebe993965cccb646cc7dbc59e23a1064a115bb5 Mon Sep 17 00:00:00 2001
-From: mertalev <101130780+mertalev@users.noreply.github.com>
-Date: Mon, 13 Jul 2026 16:00:14 -0400
-Subject: [PATCH] put other loaders ahead of dcrawload
+From eabbd92a65e14b523ea9d6a1efec247109d44cef Mon Sep 17 00:00:00 2001
+From: Mert <101130780+mertalev@users.noreply.github.com>
+Date: Thu, 16 Jul 2026 10:48:02 -0400
+Subject: [PATCH] dcrawload: move other loaders ahead of dcrawload (#5125)
 
 ---
- libvips/foreign/heifload.c | 5 +++++
- libvips/foreign/jpegload.c | 2 +-
- 2 files changed, 6 insertions(+), 1 deletion(-)
+ libvips/foreign/dcrawload.c     | 4 ++--
+ libvips/foreign/heifload.c      | 5 +++++
+ libvips/foreign/jpegload.c      | 2 +-
+ libvips/foreign/openslideload.c | 2 +-
+ libvips/foreign/uhdrload.c      | 2 +-
+ 5 files changed, 10 insertions(+), 5 deletions(-)
 
+diff --git a/libvips/foreign/dcrawload.c b/libvips/foreign/dcrawload.c
+index 51f1e220..6b2894f5 100644
+--- a/libvips/foreign/dcrawload.c
++++ b/libvips/foreign/dcrawload.c
+@@ -461,8 +461,8 @@ vips_foreign_load_dcraw_class_init(VipsForeignLoadDcRawClass *class)
+ 
+ 	operation_class->flags |= VIPS_OPERATION_UNTRUSTED;
+ 
+-	/* We need to be ahead of JPEG and TIFF, since many cameras use those
+-	 * formats as containers. We are slow to open, but we only test the
++	/* We need to be ahead of TIFF, since many cameras use that
++	 * format as a container. We are slow to open, but we only test the
+ 	 * filename suffix, so that's fine.
+ 	 */
+ 	foreign_class->priority = 100;
 diff --git a/libvips/foreign/heifload.c b/libvips/foreign/heifload.c
-index ce5582baf..e15a76f36 100644
+index 1dc412e2..80cf22ad 100644
 --- a/libvips/foreign/heifload.c
 +++ b/libvips/foreign/heifload.c
-@@ -1105,6 +1105,7 @@ vips_foreign_load_heif_class_init(VipsForeignLoadHeifClass *class)
+@@ -1073,6 +1073,7 @@ vips_foreign_load_heif_class_init(VipsForeignLoadHeifClass *class)
  {
  	GObjectClass *gobject_class = G_OBJECT_CLASS(class);
  	VipsObjectClass *object_class = (VipsObjectClass *) class;
@@ -20,7 +38,7 @@ index ce5582baf..e15a76f36 100644
  	VipsForeignLoadClass *load_class = (VipsForeignLoadClass *) class;
  
  	vips__heif_init();
-@@ -1117,6 +1118,10 @@ vips_foreign_load_heif_class_init(VipsForeignLoadHeifClass *class)
+@@ -1085,6 +1086,10 @@ vips_foreign_load_heif_class_init(VipsForeignLoadHeifClass *class)
  	object_class->description = _("load a HEIF image");
  	object_class->build = vips_foreign_load_heif_build;
  
@@ -28,11 +46,11 @@ index ce5582baf..e15a76f36 100644
 +	 */
 +	foreign_class->priority = 150;
 +
- 	load_class->get_flags = vips_foreign_load_heif_get_flags;
- 	load_class->header = vips_foreign_load_heif_header;
- 	load_class->load = vips_foreign_load_heif_load;
+ #if !LIBHEIF_HAVE_VERSION(1, 23, 2)
+ 	VipsOperationClass *operation_class = VIPS_OPERATION_CLASS(class);
+ 	operation_class->flags |= VIPS_OPERATION_UNTRUSTED;
 diff --git a/libvips/foreign/jpegload.c b/libvips/foreign/jpegload.c
-index a4f598113..09e6a22be 100644
+index c6de0391..a973611c 100644
 --- a/libvips/foreign/jpegload.c
 +++ b/libvips/foreign/jpegload.c
 @@ -177,7 +177,7 @@ vips_foreign_load_jpeg_class_init(VipsForeignLoadJpegClass *class)
@@ -44,6 +62,32 @@ index a4f598113..09e6a22be 100644
  
  	load_class->get_flags_filename = vips_foreign_load_jpeg_get_flags_filename;
  	load_class->get_flags = vips_foreign_load_jpeg_get_flags;
+diff --git a/libvips/foreign/openslideload.c b/libvips/foreign/openslideload.c
+index 520f4d05..6a581db6 100644
+--- a/libvips/foreign/openslideload.c
++++ b/libvips/foreign/openslideload.c
+@@ -985,7 +985,7 @@ vips_foreign_load_openslide_class_init(VipsForeignLoadOpenslideClass *class)
+ 	 * We need to be ahead of JPEG, since MRXS images are also
+ 	 * JPEGs.
+ 	 */
+-	foreign_class->priority = 100;
++	foreign_class->priority = 152;
+ 
+ 	/* openslide is not fuzzed too heavily.
+ 	 */
+diff --git a/libvips/foreign/uhdrload.c b/libvips/foreign/uhdrload.c
+index 5557a8a2..9d69b92b 100644
+--- a/libvips/foreign/uhdrload.c
++++ b/libvips/foreign/uhdrload.c
+@@ -605,7 +605,7 @@ vips_foreign_load_uhdr_class_init(VipsForeignLoadUhdrClass *class)
+ 
+ 	/* We need to be higher priority than jpegload.
+ 	 */
+-	foreign_class->priority = 100;
++	foreign_class->priority = 151;
+ 
+ 	load_class->get_flags = vips_foreign_load_uhdr_get_flags;
+ 	load_class->header = vips_foreign_load_uhdr_header;
 -- 
-2.43.0
+2.54.0 (Apple Git-157)
 
