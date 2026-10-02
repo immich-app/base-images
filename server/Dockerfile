@@ -39,6 +39,7 @@ RUN ./configure-apt.sh && \
   # libjpeg62-turbo-dev is just for building libvips; the final image uses jpegli (/usr/local/lib/libjpeg.so.62)
   libjpeg62-turbo-dev \
   liblcms2-dev \
+  libopenjp2-7-dev \
   librsvg2-dev \
   libspng-dev \
   meson \
