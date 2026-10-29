@@ -53,6 +53,7 @@ RUN ./configure-apt.sh && \
   postgresql-client-16 \
   postgresql-client-17 \
   postgresql-client-18 \
+  pigz \
   tini \
   make \
   ocl-icd-libopencl1 \
@@ -207,6 +208,7 @@ RUN ./configure-apt.sh && \
   postgresql-client-16 \
   postgresql-client-17 \
   postgresql-client-18 \
+  pigz \
   libio-compress-brotli-perl \
   libwebp7 \
   libwebpdemux2 \
