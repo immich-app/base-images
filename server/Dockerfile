@@ -163,9 +163,9 @@ FROM node:24.22.1-trixie-slim@sha256:43b9ba1142b8dcf33fa8f922ca1be85714adc444e05
 ARG DEBIAN_FRONTEND=noninteractive
 
 # renovate: datasource=custom.intel-igc depName=intel/intel-graphics-compiler
-ARG IGC_VERSION=2.38.2+22051
+ARG IGC_VERSION=2.42.6+23070
 # renovate: datasource=custom.intel-opencl-icd depName=intel/compute-runtime
-ARG COMPUTE_RUNTIME_VERSION=26.27.39122.11-0
+ARG COMPUTE_RUNTIME_VERSION=26.35.39758.10-0
 # renovate: datasource=custom.intel-gmmlib depName=intel/compute-runtime
 ARG GMMLIB_VERSION=22.10.0
 
