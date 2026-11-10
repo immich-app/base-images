@@ -1,4 +1,4 @@
-FROM node:24.22.1-trixie-slim@sha256:43b9ba1142b8dcf33fa8f922ca1be85714adc444e0586c7cf7726daaeabc1bea AS base
+FROM node:24.22.2-trixie-slim@sha256:0820eaa85e07d0490446dd01d14707e17e6108a36988cf374899cd057eb3812d AS base
 ARG DEBIAN_FRONTEND=noninteractive
 
 WORKDIR /usr/src/app
@@ -159,7 +159,7 @@ RUN jq -n \
   '{sources: $sources[0], packages: $packages[0]}' \
   > /build/build-lock.json
 
-FROM node:24.22.1-trixie-slim@sha256:43b9ba1142b8dcf33fa8f922ca1be85714adc444e0586c7cf7726daaeabc1bea AS prod
+FROM node:24.22.2-trixie-slim@sha256:0820eaa85e07d0490446dd01d14707e17e6108a36988cf374899cd057eb3812d AS prod
 ARG DEBIAN_FRONTEND=noninteractive
 
 # renovate: datasource=custom.intel-igc depName=intel/intel-graphics-compiler
