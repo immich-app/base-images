@@ -3,6 +3,9 @@
 # It keeps no state files: every run reads the volume and converges on the same end state.
 set -euo pipefail
 
+# shellcheck source=postgres/log.sh
+. /usr/local/bin/log.sh
+
 readonly VOLUME="${PGDATA:?}"
 readonly NEW_MAJOR="${PG_MAJOR:?}"
 readonly NEW_CLUSTER="$VOLUME/$NEW_MAJOR"
@@ -35,16 +38,16 @@ main() {
   fi
 
   if [[ -f $NEW_CLUSTER/PG_VERSION ]]; then
-    log "completing the move of the old cluster"
+    log "Completing the move of the old cluster"
     archive_old_cluster
     return
   fi
 
-  [[ -x $OLD_BIN/postgres ]] || die "this image cannot upgrade PostgreSQL $OLD_MAJOR"
+  [[ -x $OLD_BIN/postgres ]] || die "This image cannot upgrade PostgreSQL $OLD_MAJOR"
   [[ -z $(ls -A "$OLD_CLUSTER_BACKUP" 2>/dev/null) ]] ||
     die "$OLD_CLUSTER_BACKUP already holds the backup of an earlier upgrade: move it elsewhere or delete it, then start this image again"
 
-  log "upgrading PostgreSQL $OLD_MAJOR -> $NEW_MAJOR; the old cluster is kept as $OLD_CLUSTER_BACKUP"
+  log "Upgrading PostgreSQL $OLD_MAJOR -> $NEW_MAJOR"
   rm -rf "$STAGED_CLUSTER" "$WORK" # left by an interrupted attempt
   rm -f "$OLD_CLUSTER/postmaster.pid" # left behind when this container was killed
   mkdir "$WORK"
@@ -53,10 +56,10 @@ main() {
   drop_vchord_from_old_cluster
   transfer_with_pg_upgrade
   copy_config_files # after the transfer: the old pg_hba.conf could lock pg_upgrade out of the new cluster
-  log "committing the new cluster"
+  log "Committing the new cluster"
   mv -T "$STAGED_CLUSTER" "$NEW_CLUSTER"
   archive_old_cluster
-  log "major upgrade $OLD_MAJOR -> $NEW_MAJOR complete; PostgreSQL $NEW_MAJOR will start from $NEW_CLUSTER"
+  log "Major upgrade $OLD_MAJOR -> $NEW_MAJOR complete"
 }
 
 # shellcheck source=postgres/set-env.sh
@@ -77,7 +80,7 @@ fake_passwd_entry() { # initdb refuses to run without one
 }
 
 init_staged_cluster() {
-  log "initializing the new cluster"
+  log "Initializing the new cluster"
   local control checksums=--data-checksums # pg_upgrade requires them to match the old cluster's
   control="$(LC_ALL=C "$OLD_BIN/pg_controldata" "$OLD_CLUSTER")"
   if grep -q '^Data page checksum version: *0$' <<<"$control"; then checksums=--no-data-checksums; fi
@@ -85,18 +88,18 @@ init_staged_cluster() {
 }
 
 drop_vchord_from_old_cluster() { # pg_upgrade cannot transfer it across vchord versions
-  log "dropping the vchord extension (its indexes cascade; immich rebuilds them when its server next starts)"
+  log "Dropping the vchord extension"
   local dropped=
   "$OLD_BIN/pg_ctl" -D "$OLD_CLUSTER" -w -l "$WORK/old.log" \
     -o "-k $WORK -c listen_addresses= -c shared_preload_libraries=vchord.so" start >/dev/null ||
-    { cat "$WORK/old.log"; die "the old cluster failed to start"; }
+    { cat "$WORK/old.log"; die "The old cluster failed to start"; }
   if "$NEW_BIN/psql" -X -q -h "$WORK" -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "DROP EXTENSION IF EXISTS vchord CASCADE"; then dropped=1; fi
   "$OLD_BIN/pg_ctl" -D "$OLD_CLUSTER" -m fast -w stop >/dev/null # also when the drop failed
-  [[ -n $dropped ]] || die "could not drop vchord from the old cluster"
+  [[ -n $dropped ]] || die "Could not drop vchord from the old cluster"
 }
 
 transfer_with_pg_upgrade() {
-  log "transferring $OLD_MAJOR -> $NEW_MAJOR with pg_upgrade --copy-file-range"
+  log "Transferring $OLD_MAJOR -> $NEW_MAJOR"
   (cd "$WORK" && PGUSER="$POSTGRES_USER" "$NEW_BIN/pg_upgrade" --copy-file-range \
     --old-bindir="$OLD_BIN" --new-bindir="$NEW_BIN" \
     --old-datadir="$OLD_CLUSTER" --new-datadir="$STAGED_CLUSTER" \
@@ -104,7 +107,7 @@ transfer_with_pg_upgrade() {
     cat "$WORK/pg_upgrade.log"
     find "$STAGED_CLUSTER/pg_upgrade_output.d" -type f \( -name '*.log' -o -name '*.txt' \) -exec tail -n 20 -v {} + || true
     rm -rf "$STAGED_CLUSTER"
-    die "pg_upgrade failed; the next start of this image retries from scratch"
+    die "pg_upgrade failed; try again after addressing the above issues"
   }
 }
 
@@ -127,10 +130,8 @@ archive_old_cluster() {
       mv -T "$VOLUME/$entry" "$OLD_CLUSTER_BACKUP/$entry"
     done
   fi
-  log "the old cluster is in $OLD_CLUSTER_BACKUP: delete that folder once everything looks good. To roll back, delete $NEW_CLUSTER, $restore and switch to the previous image"
+  log "Archived old cluster to $OLD_CLUSTER_BACKUP; you may delete that folder once everything looks good. To roll back to it, delete $NEW_CLUSTER, $restore and switch to the previous image"
 }
 
-log() { echo "[major-upgrade] $*"; }
-die() { echo "[major-upgrade] ERROR: $*" >&2; exit 1; }
-
 main "$@"
+warn "This image is only for upgrading PostgreSQL: switch to the same tag without -upgrade"

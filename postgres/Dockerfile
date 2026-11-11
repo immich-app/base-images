@@ -67,7 +67,7 @@ RUN --mount=type=bind,source=major-upgrade.sh,target=/tmp/major-upgrade.sh \
     fi
 
 COPY postgresql.hdd.conf postgresql.ssd.conf /var/postgresql-conf-tpl/
-COPY immich-docker-entrypoint.sh healthcheck.sh set-env.sh /usr/local/bin/
+COPY immich-docker-entrypoint.sh healthcheck.sh set-env.sh log.sh /usr/local/bin/
 
 HEALTHCHECK --interval=5m --start-interval=5s --start-period=5m CMD /usr/local/bin/healthcheck.sh
 
