@@ -132,6 +132,7 @@ jobs:
           flavor: |
             # Disable latest tag
             latest=false
+            suffix=${{ matrix.variant == 'upgrade' && '-upgrade' || '' }}
           images: |
             name=ghcr.io/${{ github.repository_owner }}/postgres
           tags: |
@@ -155,36 +156,7 @@ jobs:
             VECTORCHORD_TAG=${{ matrix.vectorchord }}
             PGVECTORS_TAG=${{ matrix.pgvectors }}
             PGVECTOR_TAG=${{ matrix.pgvector }}
-
-      # only the newest major gets an upgrade image, which takes every older one
-      - name: Determine upgrade image
-        id: upgrade
-        env:
-          VERSION_MATRIX: ${{ needs.matrix.outputs.matrix }}
-          PG_MAJOR: ${{ matrix.pg }}
-          TAGS: ${{ steps.metadata.outputs.tags }}
-        run: |
-          older_majors=$(jq -r --argjson pg "$PG_MAJOR" '[.pg[] | tonumber] | if max == $pg then map(select(. < $pg)) | join(" ") else "" end' <<<"$VERSION_MATRIX")
-          echo "older_majors=$older_majors" >> "$GITHUB_OUTPUT"
-          { echo 'tags<<EOF'; awk '{ print $0 "-upgrade" }' <<<"$TAGS"; echo EOF; } >> "$GITHUB_OUTPUT"
-
-      - name: Build and push upgrade image
-        if: ${{ steps.upgrade.outputs.older_majors }}
-        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
-        with:
-          context: postgres/
-          platforms: linux/amd64,linux/arm64
-          push: ${{ steps.should-release.outputs.result }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-          tags: ${{ steps.upgrade.outputs.tags }}
-          labels: ${{ steps.metadata.outputs.labels }}
-          build-args: |
-            PG_MAJOR=${{ matrix.pg }}
-            VECTORCHORD_TAG=${{ matrix.vectorchord }}
-            PGVECTORS_TAG=${{ matrix.pgvectors }}
-            PGVECTOR_TAG=${{ matrix.pgvector }}
-            UPGRADABLE_MAJORS=${{ steps.upgrade.outputs.older_majors }}
+            UPGRADABLE_MAJORS=${{ matrix.upgradable_majors }}
 
   results:
       if: ${{ always() }}
