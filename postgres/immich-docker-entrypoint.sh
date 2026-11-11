@@ -2,6 +2,9 @@
 
 set -eo pipefail
 
+# shellcheck source=postgres/log.sh
+. /usr/local/bin/log.sh
+
 ROOT="$PGDATA"
 
 fsdir="$ROOT"
@@ -12,15 +15,12 @@ case "$fstype" in
   ext2/ext3|ext4|xfs|btrfs|zfs|f2fs|tmpfs) ;;
   *)
     if [[ "${IGNORE_DATABASE_FSTYPE,,}" != "true" ]]; then
-      cat >&2 <<EOF
-ERROR: PGDATA is on '$fstype', which is not safe for a PostgreSQL database.
-Network shares (NFS/SMB), Windows drives, and VM shared folders will corrupt your data.
-Point PGDATA at local Linux storage or use a named container volume.
-To bypass at your own risk, set IGNORE_DATABASE_FSTYPE=true.
-EOF
-      exit 1
+      die "PGDATA is on '$fstype', which is not safe for a PostgreSQL database." \
+        "Network shares (NFS/SMB), Windows drives, and VM shared folders will corrupt your data." \
+        "Point PGDATA at local Linux storage or use a named container volume." \
+        "To bypass at your own risk, set IGNORE_DATABASE_FSTYPE=true."
     fi
-    echo "WARNING: proceeding on unsafe filesystem '$fstype'" >&2
+    warn "proceeding on unsafe filesystem '$fstype'"
     ;;
 esac
 
@@ -39,16 +39,12 @@ fi
 
 # upstream would initdb the new, empty $PGDATA even next to existing data
 if [[ "${1:-}" == postgres && ! -s "$PGDATA/PG_VERSION" ]]; then
-  leftovers="$(find "$ROOT" -mindepth 1 -maxdepth 1 ! -name lost+found ! -name "$PG_MAJOR" -printf '%f\n' 2>/dev/null || true)"
+  leftovers="$(find "$ROOT" -mindepth 1 -maxdepth 1 ! -name lost+found ! -name "$PG_MAJOR" -printf ' %f' 2>/dev/null || true)"
   if [[ -n "$leftovers" ]]; then
-    cat >&2 <<EOF
-ERROR: $ROOT holds no PostgreSQL $PG_MAJOR cluster, but it is not empty:
-$leftovers
-A new cluster is only created in an empty location. If this is the wrong
-location, fix the volume mapping.
-EOF
-    if [[ -x /usr/local/bin/major-upgrade.sh ]]; then echo "If one of these is an older cluster to upgrade, set PGDATAOLD to its path." >&2; fi
-    exit 1
+    message=("$ROOT holds no PostgreSQL $PG_MAJOR cluster, but it is not empty:$leftovers"
+      "A new cluster is only created in an empty location. If this is the wrong location, fix the volume mapping.")
+    if [[ -x /usr/local/bin/major-upgrade.sh ]]; then message+=("If one of these is an older cluster to upgrade, set PGDATAOLD to its path."); fi
+    die "${message[@]}"
   fi
 fi
 
@@ -56,13 +52,12 @@ fi
 
 case "${DB_STORAGE_TYPE^^}" in
   SSD|HDD)
-    echo "Using ${DB_STORAGE_TYPE^^} storage"
+    log "Using ${DB_STORAGE_TYPE^^} storage"
     cp -n --preserve=mode "/var/postgresql-conf-tpl/postgresql.${DB_STORAGE_TYPE,,}.conf" /etc/postgresql/postgresql.conf
     sed -i "s@##PGDATA@$PGDATA@" /etc/postgresql/postgresql.conf; \
     ;;
   *)
-    echo "Error: DB_STORAGE_TYPE must be set to 'SSD' or 'HDD'" >&2
-    exit 1
+    die "DB_STORAGE_TYPE must be set to 'SSD' or 'HDD'"
     ;;
 esac
 
