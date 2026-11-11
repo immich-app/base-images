@@ -2,7 +2,9 @@
 
 set -eo pipefail
 
-fsdir="$PGDATA"
+ROOT="$PGDATA"
+
+fsdir="$ROOT"
 until [[ -d "$fsdir" ]]; do fsdir=$(dirname "$fsdir"); done
 fstype=$(stat -f -c %T "$fsdir")
 
@@ -21,6 +23,34 @@ EOF
     echo "WARNING: proceeding on unsafe filesystem '$fstype'" >&2
     ;;
 esac
+
+# only the -upgrade image ships this; as in upstream's entrypoint, only the server command runs it
+if [[ "${1:-}" == postgres && -x /usr/local/bin/major-upgrade.sh ]]; then
+  /usr/local/bin/major-upgrade.sh
+fi
+
+# a cluster a stock postgres image left, or one at $ROOT, keeps running in place; otherwise $ROOT/$PG_MAJOR
+stock=(/var/lib/postgresql/*/docker/PG_VERSION)
+if [[ -s "${stock[0]}" ]]; then
+  export PGDATA="${stock[0]%/PG_VERSION}"
+elif [[ -f "$ROOT/$PG_MAJOR/PG_VERSION" || ! -f "$ROOT/PG_VERSION" ]]; then
+  export PGDATA="$ROOT/$PG_MAJOR"
+fi
+
+# upstream would initdb the new, empty $PGDATA even next to existing data
+if [[ "${1:-}" == postgres && ! -s "$PGDATA/PG_VERSION" ]]; then
+  leftovers="$(find "$ROOT" -mindepth 1 -maxdepth 1 ! -name lost+found ! -name "$PG_MAJOR" -printf '%f\n' 2>/dev/null || true)"
+  if [[ -n "$leftovers" ]]; then
+    cat >&2 <<EOF
+ERROR: $ROOT holds no PostgreSQL $PG_MAJOR cluster, but it is not empty:
+$leftovers
+A new cluster is only created in an empty location. If this is the wrong
+location, fix the volume mapping.
+EOF
+    if [[ -x /usr/local/bin/major-upgrade.sh ]]; then echo "If one of these is an older cluster to upgrade, set PGDATAOLD to its path." >&2; fi
+    exit 1
+  fi
+fi
 
 : "${DB_STORAGE_TYPE:=SSD}"
 
