@@ -8,5 +8,5 @@ vectorchord:
   # renovate: datasource=github-releases depName=tensorchord/VectorChord
   - "1.1.1"
 pgvector:
-  # renovate: datasource=github-releases depName=pgvector/pgvector
+  # renovate: datasource=github-tags depName=pgvector/pgvector
   - "0.8.5"
