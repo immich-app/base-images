@@ -29,11 +29,15 @@ if [[ "${1:-}" == postgres && -x /usr/local/bin/major-upgrade.sh ]]; then
   /usr/local/bin/major-upgrade.sh
 fi
 
-# a cluster a stock postgres image left, or one at $ROOT, keeps running in place; otherwise $ROOT/$PG_MAJOR
-stock=(/var/lib/postgresql/*/docker/PG_VERSION)
-if [[ -s "${stock[0]}" ]]; then
-  export PGDATA="${stock[0]%/PG_VERSION}"
-elif [[ -f "$ROOT/$PG_MAJOR/PG_VERSION" || ! -f "$ROOT/PG_VERSION" ]]; then
+# the first of these to hold a cluster keeps running in place; a new one is created in $ROOT/$PG_MAJOR
+stock="/var/lib/postgresql/$PG_MAJOR/docker"
+if [[ -s "$ROOT/PG_VERSION" ]]; then
+  export PGDATA="$ROOT"
+elif [[ -s "$ROOT/$PG_MAJOR/PG_VERSION" ]]; then
+  export PGDATA="$ROOT/$PG_MAJOR"
+elif [[ -s "$stock/PG_VERSION" ]]; then
+  export PGDATA="$stock"
+else
   export PGDATA="$ROOT/$PG_MAJOR"
 fi
 
