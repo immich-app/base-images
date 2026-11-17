@@ -9,7 +9,7 @@ vectorchord:
   - &vectorchord "1.1.1"
 pgvector:
   # renovate: datasource=github-tags depName=pgvector/pgvector
-  - &pgvector "0.8.5"
+  - &pgvector "0.8.7"
 variant:
   - regular
 include:
