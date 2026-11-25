@@ -1,6 +1,6 @@
 {
   "name": "libvips",
   "repository": "libvips/libvips",
-  "version": "8.18.7",
-  "revision": "24ad4d042940e6bf99a68871ba886ca8847c9c82"
+  "version": "8.19.0-rc3",
+  "revision": "3e7d54a55ca84a10e819ef94aa514956109ddd3c"
 }
