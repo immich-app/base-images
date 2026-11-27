@@ -101,6 +101,11 @@ FROM base AS libjxl
 COPY sources/libjxl.json sources/libjxl.sh ./
 RUN ./libjxl.sh
 
+FROM base AS libultrahdr
+
+COPY sources/libultrahdr.json sources/libultrahdr.sh ./
+RUN ./libultrahdr.sh
+
 FROM base AS libraw
 
 COPY sources/libraw.json sources/libraw.sh ./
@@ -114,13 +119,16 @@ COPY --from=libheif /usr/local/include/libheif/ /usr/local/include/libheif/
 COPY --from=libjxl /usr/local/lib/ /usr/local/lib/libjxl/
 COPY --from=libjxl /usr/local/include/jxl/ /usr/local/include/jxl/
 
+COPY --from=libultrahdr /usr/local/lib/ /usr/local/lib/libultrahdr/
+COPY --from=libultrahdr /usr/local/include/ultrahdr_api.h /usr/local/include/
+
 COPY --from=jpegli /usr/local/lib/ /usr/local/lib/jpegli/
 COPY --from=jpegli /usr/local/include/jconfig.h /usr/local/include/jmorecfg.h /usr/local/include/jpeglib.h /usr/local/include/
 
 # COPY resolves symlinks unless copying the enclosing folder, so this is a workaround to get the correct result.
-RUN cp -r /usr/local/lib/libheif/libheif* /usr/local/lib/libjxl/libjxl* /usr/local/lib/jpegli/libjpeg.so* /usr/local/lib && \
-  mv /usr/local/lib/libheif/pkgconfig/* /usr/local/lib/libjxl/pkgconfig/* /usr/local/lib/pkgconfig && \
-  rm -r /usr/local/lib/libheif /usr/local/lib/libjxl /usr/local/lib/jpegli
+RUN cp -r /usr/local/lib/libheif/libheif* /usr/local/lib/libjxl/libjxl* /usr/local/lib/libultrahdr/libuhdr* /usr/local/lib/jpegli/libjpeg.so* /usr/local/lib && \
+  mv /usr/local/lib/libheif/pkgconfig/* /usr/local/lib/libjxl/pkgconfig/* /usr/local/lib/libultrahdr/pkgconfig/* /usr/local/lib/pkgconfig && \
+  rm -r /usr/local/lib/libheif /usr/local/lib/libjxl /usr/local/lib/libultrahdr /usr/local/lib/jpegli
 
 COPY sources/imagemagick.json sources/imagemagick.sh ./
 RUN ./imagemagick.sh
@@ -128,6 +136,7 @@ RUN ./imagemagick.sh
 FROM imagemagick AS libvips
 
 COPY sources/libvips.json sources/libvips.sh ./
+COPY sources/libvips-patches/ ./libvips-patches/
 RUN ./libvips.sh
 
 FROM base AS dev
