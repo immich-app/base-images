@@ -22,6 +22,7 @@ git reset --hard "$JPEGLI_REVISION"
 git submodule update --init --depth 1 --recommend-shallow third_party/libjpeg-turbo
 git apply -3 ../jpegli-patches/jpegli-empty-dht-marker.patch # https://github.com/google/jpegli/pull/222
 git apply -3 ../jpegli-patches/jpegli-icc-warning.patch # https://github.com/google/jpegli/pull/48
+git apply -3 ../jpegli-patches/jpegli-marker-list-order.patch # https://github.com/google/jpegli/pull/251
 
 mkdir build
 cd build

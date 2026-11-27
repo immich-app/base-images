@@ -1,0 +1,63 @@
+diff --git a/lib/jpegli/decode.cc b/lib/jpegli/decode.cc
+index cd0feb9a..7ffcce3e 100644
+--- a/lib/jpegli/decode.cc
++++ b/lib/jpegli/decode.cc
+@@ -68,6 +68,7 @@ void InitializeImage(j_decompress_ptr cinfo) {
+   m->icc_index_ = 0;
+   m->icc_total_ = 0;
+   m->icc_profile_.clear();
++  m->marker_list_end_ = nullptr;
+   memset(m->dc_huff_lut_, 0, sizeof(m->dc_huff_lut_));
+   memset(m->ac_huff_lut_, 0, sizeof(m->ac_huff_lut_));
+   // Initialize the values to an invalid symbol so that we can recognize it
+diff --git a/lib/jpegli/decode_internal.h b/lib/jpegli/decode_internal.h
+index b0b7f302..0a6dc502 100644
+--- a/lib/jpegli/decode_internal.h
++++ b/lib/jpegli/decode_internal.h
+@@ -73,6 +73,8 @@ struct jpeg_decomp_master {
+   jpegli::HuffmanTableEntry dc_huff_lut_[jpegli::kAllHuffLutSize];
+   jpegli::HuffmanTableEntry ac_huff_lut_[jpegli::kAllHuffLutSize];
+   uint8_t markers_to_save_[32];
++  // The last entry of cinfo->marker_list.
++  jpeg_saved_marker_ptr marker_list_end_;
+   jpeg_marker_parser_method app_marker_parsers[16];
+   jpeg_marker_parser_method com_marker_parser;
+ 
+diff --git a/lib/jpegli/decode_marker.cc b/lib/jpegli/decode_marker.cc
+index eb42a97f..97624454 100644
+--- a/lib/jpegli/decode_marker.cc
++++ b/lib/jpegli/decode_marker.cc
+@@ -457,17 +457,23 @@ void SaveMarker(j_decompress_ptr cinfo, const uint8_t* data, size_t len) {
+   const uint8_t* payload = data + 2;
+   size_t payload_size = len - 2;
+ 
+-  // Insert new saved marker to the head of the list.
+-  jpeg_saved_marker_ptr next = cinfo->marker_list;
+-  cinfo->marker_list =
++  // Append new saved marker to the tail of the list, so that the list is in
++  // the order the markers appear in the file, as with libjpeg.
++  jpeg_saved_marker_ptr saved =
+       jpegli::Allocate<jpeg_marker_struct>(cinfo, 1, JPOOL_IMAGE);
+-  cinfo->marker_list->next = next;
+-  cinfo->marker_list->marker = marker;
+-  cinfo->marker_list->original_length = payload_size;
+-  cinfo->marker_list->data_length = payload_size;
+-  cinfo->marker_list->data =
+-      jpegli::Allocate<uint8_t>(cinfo, payload_size, JPOOL_IMAGE);
+-  memcpy(cinfo->marker_list->data, payload, payload_size);
++  saved->next = nullptr;
++  saved->marker = marker;
++  saved->original_length = payload_size;
++  saved->data_length = payload_size;
++  saved->data = jpegli::Allocate<uint8_t>(cinfo, payload_size, JPOOL_IMAGE);
++  memcpy(saved->data, payload, payload_size);
++  jpeg_decomp_master* m = cinfo->master;
++  if (m->marker_list_end_ == nullptr) {
++    cinfo->marker_list = saved;
++  } else {
++    m->marker_list_end_->next = saved;
++  }
++  m->marker_list_end_ = saved;
+ }
+ 
+ uint8_t ProcessNextMarker(j_decompress_ptr cinfo, const uint8_t* const data,
